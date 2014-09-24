@@ -3,17 +3,27 @@
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, Material material)
 {
-
+	this->mVertices = vertices;
+	this->mIndices = indices;
+	this->mTextures = textures;
+	this->mMaterial = material;
+	this->setup();
 }
 
 Mesh::~Mesh()
 {
-
+	glDeleteBuffers(1,&mEBO);
+	glDeleteBuffers(1,&mVBO);
+	glDeleteVertexArrays(1,&mVAO);
 }
 
 void Mesh::draw(Shader shader)
 {
+	//to do texture
 
+	glBindVertexArray(this->mVAO);
+	glDrawElements(GL_TRIANGLES,this->mIndices.size(),GL_UNSIGNED_INT,0);
+	glBindVertexArray(0);
 }
 
 void Mesh::setup()
@@ -39,6 +49,5 @@ void Mesh::setup()
 
 	//texture coords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),(GLvoid*)(sizeof(glm::vec3)*2));
-
+	glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),(GLvoid*)(sizeof(glm::vec3)*2))
 }

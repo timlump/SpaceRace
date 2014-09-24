@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Shader.h"
 
+//derived from http://learnopengl.com/#!Model-Loading/Mesh
+
 struct Vertex
 {
 	glm::vec3 position;
