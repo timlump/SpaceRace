@@ -1,10 +1,13 @@
-﻿Build started 24/09/2014 01:12:25.
+﻿Build started 24/09/2014 09:55:17.
      1>Project "C:\Users\Timothy\Projects\SpaceRace\SpaceRace\SpaceRace\SpaceRace.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         E:\VS\VC\bin\CL.exe /c /I"E:\Libraries\lua-5.1.5_Win32_dll12_lib\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /I"E:\Libraries\glfw-3.0.3.bin.WIN32\include" /I"E:\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /IE:\Libraries\glm /IE:\Libraries\AntTweakBar\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\SpaceRace.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Mesh.cpp
+         E:\VS\VC\bin\CL.exe /c /I"E:\Libraries\lua-5.1.5_Win32_dll12_lib\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /I"E:\Libraries\glfw-3.0.3.bin.WIN32\include" /I"E:\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /IE:\Libraries\glm /IE:\Libraries\AntTweakBar\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\SpaceRace.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Mesh.cpp Shader.cpp
+         Shader.cpp
          Mesh.cpp
+         Generating Code...
        Link:
          E:\VS\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Debug\SpaceRace.exe" /INCREMENTAL /NOLOGO /LIBPATH:"E:\Libraries\lua-5.1.5_Win32_dll12_lib" /LIBPATH:"E:\Libraries\DevIL-SDK-x86-1.7.8\lib" /LIBPATH:E:\Libraries\AntTweakBar\lib /LIBPATH:"C:\Program Files\Assimp\lib\x86" /LIBPATH:"E:\Libraries\glew-1.11.0\lib\Release\Win32" /LIBPATH:"E:\Libraries\glfw-3.0.3.bin.WIN32\lib-msvc110" lua5.1.lib DevIL.lib ILU.lib ILUT.lib AntTweakBar.lib assimp.lib glew32.lib glfw3dll.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Debug\SpaceRace.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Debug\SpaceRace.lib" /MACHINE:X86 Debug\Mesh.obj
+         Debug\Shader.obj
          Debug\SpaceRace.obj
          Debug\stdafx.obj
          SpaceRace.vcxproj -> C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Debug\SpaceRace.exe
@@ -12,4 +15,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.34
+Time Elapsed 00:00:01.06

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Shader.h"
 
 struct Vertex
 {
@@ -15,6 +16,11 @@ struct Texture
 
 struct Material
 {
+	bool hasDiffuse;
+	bool hasAmbient;
+	bool hasSpecular;
+	bool hasEmission;
+	bool hasShininess;
 	glm::vec4 diffuse;
 	glm::vec4 ambient;
 	glm::vec4 specular;
@@ -25,7 +31,15 @@ struct Material
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, Material material);
 	~Mesh();
+	void draw(Shader shader);
+	std::vector<Vertex> mVertices;
+	std::vector<GLuint> mIndices;
+	std::vector<Texture> mTextures;
+	Material mMaterial;
+
 private:
+	void setup();
+	GLuint mVAO,mVBO,mEBO;
 };
