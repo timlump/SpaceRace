@@ -14,6 +14,9 @@ void draw(GLFWwindow *window)
 	glClearColor(CORN_FLOWER_BLUE);
 
 	//draw stuff here....
+	
+	//render the user interface
+	CEGUI::System::getSingleton().renderAllGUIContexts();
 	glfwSwapBuffers(window);
 }
 
@@ -30,6 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 
 #pragma region INIT
+	//opengl
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
@@ -51,8 +55,21 @@ int _tmain(int argc, _TCHAR* argv[])
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	//scripting
 	lua_State *luaState = luaL_newstate();
 	luaL_openlibs(luaState);
+
+	//user interface
+	CEGUI::OpenGL3Renderer& guiRenderer = CEGUI::OpenGL3Renderer::bootstrapSystem();
+
+	//sound
+	irrklang::ISoundEngine *soundEngine = irrklang::createIrrKlangDevice();
+	//irrklang::ISound *music = soundEngine->play2D("../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
+	//irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
+	//fx->enableDistortionSoundEffect();
+
+	//physics
+	//to do
 #pragma endregion INIT
 
 #pragma region CORE
@@ -66,6 +83,8 @@ int _tmain(int argc, _TCHAR* argv[])
 #pragma endregion CORE
 
 #pragma region CLEAN_UP
+	soundEngine->drop();
+	guiRenderer.destroySystem();
 	lua_close(luaState);
 	glfwTerminate();
 	return 0;

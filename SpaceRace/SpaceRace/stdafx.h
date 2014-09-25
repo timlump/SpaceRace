@@ -29,5 +29,10 @@
 #include <assimp\Importer.hpp>
 #include <assimp\postprocess.h>
 
+#include <CEGUI\RendererModules\OpenGL\GL3Renderer.h>
+#include <CEGUI\System.h>
+
+#include <irrKlang.h>
+
 
 // TODO: reference additional headers your program requires here
