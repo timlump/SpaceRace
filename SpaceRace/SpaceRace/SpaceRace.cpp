@@ -3,6 +3,25 @@
 
 #include "stdafx.h"
 
+//Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
+void updateFrameRate(GLFWwindow *window)
+{
+	static double prevSeconds = glfwGetTime();
+	static int frameCount;
+	double currentSeconds = glfwGetTime();
+	double elapsedSeconds = currentSeconds-prevSeconds;
+	if(elapsedSeconds > FPS_TRACK_DELAY)
+	{
+		prevSeconds = currentSeconds;
+		double fps = (double)frameCount/elapsedSeconds;
+		char tmp[128];
+		sprintf(tmp,"Space Race @ FPS: %.2f",fps);
+		glfwSetWindowTitle(window,tmp);
+		frameCount = 0;
+	}
+	frameCount++;
+};
+
 void logic(lua_State *luaState)
 {
 
@@ -11,7 +30,7 @@ void logic(lua_State *luaState)
 void draw(GLFWwindow *window)
 {
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	glClearColor(CORN_FLOWER_BLUE);
+	glClearColor(CORN_FLOWER_BLUE);//XNA nostalgia
 
 	//draw stuff here....
 	
@@ -31,7 +50,6 @@ void io(GLFWwindow *window)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
 #pragma region INIT
 	//opengl
 	glfwInit();
@@ -64,9 +82,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//sound
 	irrklang::ISoundEngine *soundEngine = irrklang::createIrrKlangDevice();
-	//irrklang::ISound *music = soundEngine->play2D("../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
-	//irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
-	//fx->enableDistortionSoundEffect();
+	irrklang::ISound *music = soundEngine->play2D("../../../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
+	irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
+	fx->enableDistortionSoundEffect();
 
 	//physics
 	//to do
@@ -76,6 +94,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//main loop
 	while(!glfwWindowShouldClose(window))
 	{
+		updateFrameRate(window);
 		logic(luaState);
 		draw(window);
 		io(window);

@@ -40,7 +40,6 @@ public:
 	std::vector<GLuint> mIndices;
 	std::vector<Texture> mTextures;
 	Material mMaterial;
-
 private:
 	void setup();
 	GLuint mVAO,mVBO,mEBO;
