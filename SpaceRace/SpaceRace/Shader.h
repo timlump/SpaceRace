@@ -20,4 +20,8 @@ private:
 	static std::map<std::string,ShaderInstance> mVertShaders;
 	static std::map<std::string,ShaderInstance> mFragShaders;
 	static std::map<std::pair<GLuint,GLuint>,ShaderInstance> mPrograms;
+
+	int *mVertCount,*mFragCount, *mProgramCount;
+	const std::string *mVertKey,*mFragKey;
+	const std::pair<GLuint,GLuint> *mProgramKey;
 };
