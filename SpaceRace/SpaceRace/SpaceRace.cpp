@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "Mesh.h"
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
 void updateFrameRate(GLFWwindow *window)
@@ -89,6 +90,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//physics
 	//to do
 #pragma endregion INIT
+
+	Shader test = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.frag");
+	Shader test2 = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.frag");
 
 #pragma region CORE
 	//main loop

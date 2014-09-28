@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Shader.h"
 
-std::map<std::string,ShaderInstance> Shader::mVertShaders = std::map<std::string,ShaderInstance>();
-std::map<std::string,ShaderInstance> Shader::mFragShaders = std::map<std::string,ShaderInstance>();
-std::map<std::pair<GLuint,GLuint>,ShaderInstance> Shader::mPrograms = std::map<std::pair<GLuint,GLuint>,ShaderInstance>();
+std::map<std::string,GLuint> Shader::mVertShaders = std::map<std::string,GLuint>();
+std::map<std::string,GLuint> Shader::mFragShaders = std::map<std::string,GLuint>();
+std::map<std::pair<GLuint,GLuint>,GLuint> Shader::mPrograms = std::map<std::pair<GLuint,GLuint>,GLuint>();
 
 Shader::Shader(std::string vertShader,std::string fragShader)
 {
@@ -12,103 +12,65 @@ Shader::Shader(std::string vertShader,std::string fragShader)
 	mProgram = createProgram(mVertexShader,mFragmentShader);
 }
 
-Shader::~Shader()
-{
-	*mVertCount--;
-	*mFragCount--;
-	*mProgramCount--;
-
-	if(*mProgramCount == 0)
-	{
-		glDeleteProgram(mProgram);
-		std::map<std::pair<GLuint,GLuint>,ShaderInstance>::iterator it = mPrograms.find(*mProgramKey);
-		mPrograms.erase(it);
-	}
-
-	if(*mVertCount == 0)
-	{
-		glDeleteShader(mVertexShader);
-		std::map<std::string,ShaderInstance>::iterator it = mVertShaders.find(*mVertKey);
-		mVertShaders.erase(it);
-	}
-
-	if(*mFragCount == 0)
-	{
-		glDeleteShader(mFragmentShader);
-		std::map<std::string,ShaderInstance>::iterator it = mFragShaders.find(*mFragKey);
-		mFragShaders.erase(it);
-	}
-}
-
 GLuint Shader::createVertexShader(std::string vertShader)
 {
 	auto id = mVertShaders.find(vertShader);
 	if(id != mVertShaders.end())
 	{
-		id->second.count++;
-		mVertCount = &id->second.count;
-		mVertKey = &id->first;
-		return id->second.id;
+		return id->second;
 	}
 	else
 	{
-		ShaderInstance inst;
-		inst.count = 1;
-		mVertCount = &inst.count;
-		inst.id = glCreateShader(GL_VERTEX_SHADER);
+		GLuint sdr = glCreateShader(GL_VERTEX_SHADER);
 		std::string source = loadShaderSource(vertShader);
-		glShaderSource(inst.id,1,(const char **)source.c_str(),NULL);
-		glCompileShader(inst.id);
+		const GLchar * tmp = static_cast<const GLchar *>(source.c_str());
 
-		mVertShaders[vertShader] = inst;
-		mVertKey = &vertShader;
+		glShaderSource(sdr,1,&tmp,NULL);
+		glCompileShader(sdr);
+
+		mVertShaders[vertShader] = sdr;
 
 		GLint status;
-		glGetShaderiv(inst.id,GL_COMPILE_STATUS,&status);
+		glGetShaderiv(sdr,GL_COMPILE_STATUS,&status);
 		if(status)
 		{
 			char buffer[512];
-			glGetShaderInfoLog(inst.id,512,NULL,buffer);
+			glGetShaderInfoLog(sdr,512,NULL,buffer);
 			printf("%s\n",buffer);
 		}
 
-		return inst.id;
+		return sdr;
 	}
 }
 
 GLuint Shader::createFragmentShader(std::string fragShader)
 {
-	auto id = mVertShaders.find(fragShader);
-	if(id != mVertShaders.end())
+	auto id = mFragShaders.find(fragShader);
+	if(id != mFragShaders.end())
 	{
-		id->second.count++;
-		mFragCount = &id->second.count;
-		mFragKey = &id->first;
-		return id->second.id;
+		return id->second;
 	}
 	else
 	{
-		ShaderInstance inst;
-		inst.count = 1;
-		mFragCount = &inst.count;
-		inst.id = glCreateShader(GL_FRAGMENT_SHADER);
+		GLuint sdr = glCreateShader(GL_FRAGMENT_SHADER);
 		std::string source = loadShaderSource(fragShader);
-		glShaderSource(inst.id,1,(const char **)source.c_str(),NULL);
-		glCompileShader(inst.id);
+		const GLchar * tmp = static_cast<const GLchar *>(source.c_str());
 
-		mFragShaders[fragShader] = inst;
-		mVertKey = &fragShader;
+		glShaderSource(sdr,1,&tmp,NULL);
+		glCompileShader(sdr);
+
+		mFragShaders[fragShader] = sdr;
 
 		GLint status;
-		glGetShaderiv(inst.id,GL_COMPILE_STATUS,&status);
+		glGetShaderiv(sdr,GL_COMPILE_STATUS,&status);
 		if(status)
 		{
 			char buffer[512];
-			glGetShaderInfoLog(inst.id,512,NULL,buffer);
+			glGetShaderInfoLog(sdr,512,NULL,buffer);
 			printf("%s\n",buffer);
 		}
 
-		return inst.id;
+		return sdr;
 	}
 }
 
@@ -116,33 +78,26 @@ GLuint Shader::createProgram(GLuint vertID,GLuint fragID)
 {
 	//see if the program already exists
 	bool found = false;
-	for(std::map<std::pair<GLuint,GLuint>,ShaderInstance>::iterator it = mPrograms.begin() ; it != mPrograms.end() ; ++it)
+	for(std::map<std::pair<GLuint,GLuint>,GLuint>::iterator it = mPrograms.begin() ; it != mPrograms.end() ; ++it)
 	{
 		std::pair<GLuint,GLuint> ids = it->first;
 		if(ids.first == vertID && ids.second == fragID)
 		{
 			found = true;
-			it->second.count++;
-			mProgramCount = &it->second.count;
-			mProgramKey = &it->first;
-			return it->second.id;
+			return it->second;
 		}
 	}
 
-	ShaderInstance inst;
-	inst.count = 1;
-	mProgramCount = &inst.count;
-	inst.id = glCreateProgram();
-	glAttachShader(inst.id,vertID);
-	glAttachShader(inst.id,fragID);
-	glLinkProgram(inst.id);
-	glUseProgram(inst.id);
+	GLuint sdr = glCreateProgram();
+	glAttachShader(sdr,vertID);
+	glAttachShader(sdr,fragID);
+	glLinkProgram(sdr);
+	glUseProgram(sdr);
 
 	std::pair<GLuint,GLuint> key = std::pair<GLuint,GLuint>(vertID,fragID);
-	mPrograms[key] = inst;
-	mProgramKey = &key;
+	mPrograms[key] = sdr;
 
-	return inst.id;
+	return sdr;
 }
 
 std::string Shader::loadShaderSource(std::string filename)
