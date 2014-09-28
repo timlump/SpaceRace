@@ -2,7 +2,6 @@
 #include "Shader.h"
 
 //derived from http://learnopengl.com/#!Model-Loading/Mesh
-
 struct Vertex
 {
 	glm::vec3 position;
@@ -18,29 +17,29 @@ struct Texture
 
 struct Material
 {
-	bool hasDiffuse;
-	bool hasAmbient;
-	bool hasSpecular;
-	bool hasEmission;
-	bool hasShininess;
+	GLboolean hasDiffuse;
+	GLboolean hasAmbient;
+	GLboolean hasSpecular;
+	GLboolean hasEmission;
+	GLboolean hasShininess;
+	GLboolean hasTextures;
 	glm::vec4 diffuse;
 	glm::vec4 ambient;
 	glm::vec4 specular;
 	glm::vec4 emission;
-	float shininess;
+	GLfloat shininess;
+	std::vector<Texture> textures;
 };
 
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, Material material);
-	~Mesh();
-	void draw(Shader shader);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material);
+	void draw(Shader *shader);
+	void setup();
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
-	std::vector<Texture> mTextures;
 	Material mMaterial;
 private:
-	void setup();
 	GLuint mVAO,mVBO,mEBO;
 };

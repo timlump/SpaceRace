@@ -39,5 +39,9 @@
 
 #include <irrKlang.h>
 
+#include <IL\il.h>
+#include <IL\ilu.h>
+#include <IL\ilut.h>
+
 
 // TODO: reference additional headers your program requires here

@@ -2,7 +2,19 @@
 //
 
 #include "stdafx.h"
-#include "Mesh.h"
+#include "Model.h"
+
+struct Entity
+{
+	Model *model;
+};
+
+struct Camera
+{
+	glm::mat4 view;
+	glm::mat4 projection;
+	glm::mat4 model;
+};
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
 void updateFrameRate(GLFWwindow *window)
@@ -28,10 +40,28 @@ void logic(lua_State *luaState)
 
 }
 
-void draw(GLFWwindow *window)
+void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,Camera *camera)
 {
+	//glFlush();
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	glClearColor(CORN_FLOWER_BLUE);//XNA nostalgia
+
+	glUseProgram(shader->mProgram);
+
+	camera->model = glm::rotate(camera->model,0.1f,glm::vec3(0.0f,1.0f,0.0f));
+
+	GLuint modelID = glGetUniformLocation(shader->mProgram,"model");
+	GLuint viewID = glGetUniformLocation(shader->mProgram,"view");
+	GLuint perspectiveID = glGetUniformLocation(shader->mProgram,"projection");
+
+	glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr(camera->model));
+	glUniformMatrix4fv(viewID,1,GL_FALSE,glm::value_ptr(camera->view));
+	glUniformMatrix4fv(perspectiveID,1,GL_FALSE,glm::value_ptr(camera->projection));
+
+	for(int i = 0 ; i < entities->size() ; i++)
+	{
+		(*entities)[i].model->draw(shader);
+	}
 
 	//draw stuff here....
 	
@@ -74,6 +104,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	//shader
+	Shader gameShader = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.frag");
+
 	//scripting
 	lua_State *luaState = luaL_newstate();
 	luaL_openlibs(luaState);
@@ -85,14 +118,28 @@ int _tmain(int argc, _TCHAR* argv[])
 	irrklang::ISoundEngine *soundEngine = irrklang::createIrrKlangDevice();
 	irrklang::ISound *music = soundEngine->play2D("../../../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
 	irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
-	fx->enableDistortionSoundEffect();
+	//fx->enableDistortionSoundEffect();
+
+	//devil
+	ilInit();
 
 	//physics
 	//to do
-#pragma endregion INIT
 
-	Shader test = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.frag");
-	Shader test2 = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.frag");
+	//load models
+	std::vector<Entity> entities;
+	
+	Entity entity;
+	Model boxModel =  Model("../../../Media/Models/monkey.dae");
+	entity.model = &boxModel;
+	entities.push_back(entity);
+
+	Camera camera;
+	camera.projection = glm::perspective(67.0f,(float)vmode->width/vmode->height,0.1f,100.0f);
+	camera.view = glm::lookAt(glm::vec3(0.0f,0.0f,2.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
+	camera.model = glm::mat4(1.0f);
+	 
+#pragma endregion INIT
 
 #pragma region CORE
 	//main loop
@@ -100,7 +147,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		updateFrameRate(window);
 		logic(luaState);
-		draw(window);
+		draw(window,&gameShader,&entities,&camera);
 		io(window);
 	}
 #pragma endregion CORE

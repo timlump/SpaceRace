@@ -32,7 +32,7 @@ GLuint Shader::createVertexShader(std::string vertShader)
 
 		GLint status;
 		glGetShaderiv(sdr,GL_COMPILE_STATUS,&status);
-		if(status)
+		if(status == GL_FALSE)
 		{
 			char buffer[512];
 			glGetShaderInfoLog(sdr,512,NULL,buffer);
@@ -63,7 +63,7 @@ GLuint Shader::createFragmentShader(std::string fragShader)
 
 		GLint status;
 		glGetShaderiv(sdr,GL_COMPILE_STATUS,&status);
-		if(status)
+		if(status == GL_FALSE)
 		{
 			char buffer[512];
 			glGetShaderInfoLog(sdr,512,NULL,buffer);
