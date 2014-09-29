@@ -5,6 +5,8 @@ class Shader
 public:
 	Shader(std::string vertShader,std::string fragShader);
 	GLuint mVertexShader, mFragmentShader, mProgram;
+	void bind();
+	void unbind();
 private:
 	GLuint createVertexShader(std::string vertShader);
 	GLuint createFragmentShader(std::string fragShader);

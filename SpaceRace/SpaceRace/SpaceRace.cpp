@@ -14,6 +14,12 @@ struct Camera
 	glm::mat4 view;
 	glm::mat4 projection;
 	glm::mat4 model;
+	glm::vec3 position;
+};
+
+struct Light
+{
+	glm::vec3 lightPos;
 };
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
@@ -40,28 +46,43 @@ void logic(lua_State *luaState)
 
 }
 
-void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,Camera *camera)
+void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::vector<Light> *lights,Camera *camera)
 {
 	//glFlush();
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	glClearColor(CORN_FLOWER_BLUE);//XNA nostalgia
 
-	glUseProgram(shader->mProgram);
+	shader->bind();
 
 	camera->model = glm::rotate(camera->model,0.1f,glm::vec3(0.0f,1.0f,0.0f));
 
 	GLuint modelID = glGetUniformLocation(shader->mProgram,"model");
 	GLuint viewID = glGetUniformLocation(shader->mProgram,"view");
 	GLuint perspectiveID = glGetUniformLocation(shader->mProgram,"projection");
+	GLuint viewPosID = glGetUniformLocation(shader->mProgram,"viewPos");
 
 	glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr(camera->model));
 	glUniformMatrix4fv(viewID,1,GL_FALSE,glm::value_ptr(camera->view));
 	glUniformMatrix4fv(perspectiveID,1,GL_FALSE,glm::value_ptr(camera->projection));
+	glUniform3fv(viewPosID,1,glm::value_ptr(camera->view));
+
+	GLuint numLights = glGetUniformLocation(shader->mProgram,"numLights");
+	glUniform1i(numLights,lights->size());
+
+	for(int i = 0 ; i < lights->size() ; i++)
+	{
+		char buffer[80];
+		sprintf(buffer,"lights[%d]",i);
+		GLuint lightID = glGetUniformLocation(shader->mProgram,buffer);
+		glUniform3fv(lightID,1,glm::value_ptr((*lights)[i].lightPos));
+	};
 
 	for(int i = 0 ; i < entities->size() ; i++)
 	{
 		(*entities)[i].model->draw(shader);
 	}
+
+	shader->unbind();
 
 	//draw stuff here....
 	
@@ -105,7 +126,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	glDepthFunc(GL_LESS);
 
 	//shader
-	Shader gameShader = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\test.frag");
+	Shader gameShader = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\entityShader.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\entityShader.frag");
 
 	//scripting
 	lua_State *luaState = luaL_newstate();
@@ -116,8 +137,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//sound
 	irrklang::ISoundEngine *soundEngine = irrklang::createIrrKlangDevice();
-	irrklang::ISound *music = soundEngine->play2D("../../../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
-	irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
+	//irrklang::ISound *music = soundEngine->play2D("../../../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
+	//irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
 	//fx->enableDistortionSoundEffect();
 
 	//devil
@@ -125,6 +146,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//physics
 	//to do
+
+	//load lights
+	std::vector<Light> lights;
+	Light light;
+	light.lightPos = glm::vec3(5.0f,2.0f,0.0f);
+	lights.push_back(light);
 
 	//load models
 	std::vector<Entity> entities;
@@ -135,8 +162,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	entities.push_back(entity);
 
 	Camera camera;
+	camera.position = glm::vec3(0.0f,0.0f,2.0f);
 	camera.projection = glm::perspective(67.0f,(float)vmode->width/vmode->height,0.1f,100.0f);
-	camera.view = glm::lookAt(glm::vec3(0.0f,0.0f,2.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
+	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
 	camera.model = glm::mat4(1.0f);
 	 
 #pragma endregion INIT
@@ -147,7 +175,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		updateFrameRate(window);
 		logic(luaState);
-		draw(window,&gameShader,&entities,&camera);
+		draw(window,&gameShader,&entities,&lights,&camera);
 		io(window);
 	}
 #pragma endregion CORE

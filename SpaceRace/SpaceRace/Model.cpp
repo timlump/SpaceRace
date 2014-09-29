@@ -162,32 +162,22 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			material.shininess = 0.0f;
 		}
 		//textures
-		std::vector<Texture> diffuseMaps = loadMaterialTextures(mat,aiTextureType_DIFFUSE,"diffuse");
-		material.textures.insert(material.textures.end(),diffuseMaps.begin(),diffuseMaps.end());
+		GLboolean success;
+		material.diffuseTexture = loadMaterialTexture(mat,aiTextureType_DIFFUSE,success);
+		material.hasDiffuseTexture = success;
 
-		std::vector<Texture> specularMaps = loadMaterialTextures(mat,aiTextureType_SPECULAR,"specular");
-		material.textures.insert(material.textures.end(),specularMaps.begin(),specularMaps.end());
+		material.specularTexture = loadMaterialTexture(mat,aiTextureType_SPECULAR,success);
+		material.hasSpecularTexture = success;
 
-		std::vector<Texture> ambientMaps = loadMaterialTextures(mat,aiTextureType_AMBIENT,"ambient");
-		material.textures.insert(material.textures.end(),ambientMaps.begin(),ambientMaps.end());
+		material.ambientTexture = loadMaterialTexture(mat,aiTextureType_AMBIENT,success);
+		material.hasAmbientTexture = success;
 
-		std::vector<Texture> emissionMaps = loadMaterialTextures(mat,aiTextureType_EMISSIVE,"emission");
-		material.textures.insert(material.textures.end(),emissionMaps.begin(),emissionMaps.end());
+		material.emissionTexture = loadMaterialTexture(mat,aiTextureType_EMISSIVE,success);
+		material.hasEmissionTexture = success;
 
-		std::vector<Texture> shinyMaps = loadMaterialTextures(mat,aiTextureType_SHININESS,"shininess");
-		material.textures.insert(material.textures.end(),shinyMaps.begin(),shinyMaps.end());
+		material.normalTexture = loadMaterialTexture(mat,aiTextureType_NORMALS,success);
+		material.hasNormalTexture = success;
 
-		std::vector<Texture> normalMaps = loadMaterialTextures(mat,aiTextureType_NORMALS,"normal");
-		material.textures.insert(material.textures.end(),normalMaps.begin(),normalMaps.end());
-
-		if(material.textures.size() > 0)
-		{
-			material.hasTextures = GL_TRUE;
-		}
-		else
-		{
-			material.hasTextures = GL_FALSE;
-		}
 	}
 	else
 	{
@@ -196,7 +186,11 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		material.hasAmbient = GL_FALSE;
 		material.hasEmission = GL_FALSE;
 		material.hasShininess = GL_FALSE;
-		material.hasTextures = GL_FALSE;
+
+		material.hasDiffuseTexture = GL_FALSE;
+		material.hasSpecularTexture = GL_FALSE;
+		material.hasAmbientTexture = GL_FALSE;
+		material.hasEmissionTexture = GL_FALSE;
 
 		material.diffuse = glm::vec4(0.0f);
 		material.specular = glm::vec4(0.0f);
@@ -208,15 +202,14 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	return Mesh(vertices,indices,material);
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)
 {
-	std::vector<Texture> textures;
-	for(int i = 0 ; i < mat->GetTextureCount(type) ; i++)
+	success = GL_FALSE;
+	GLuint tex = -1;
+	if( mat->GetTextureCount(type) > 0)
 	{
-		Texture texture;
-		texture.type = typeName;
 		aiString aName;
-		mat->GetTexture(type,i,&aName);
+		mat->GetTexture(type,0,&aName);
 		std::string name(aName.C_Str());
 		std::string filename = mDirectory + "//" + name;
 		std::wstring wFilename(filename.begin(),filename.end());
@@ -225,7 +218,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 		auto id = mTextureIDs.find(filename);
 		if(id != mTextureIDs.end())
 		{
-			texture.id = id->second;
+			tex = id->second;
 		}
 		else
 		{
@@ -245,8 +238,11 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 			ilDeleteImages(1,&devilID);
 
 			mTextureIDs[filename] = glID;
+
+			tex =  glID;
 		}
-		textures.push_back(texture);
+		success = GL_TRUE;
 	}
-	return textures;
+
+	return tex;
 }

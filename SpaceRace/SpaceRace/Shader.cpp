@@ -12,6 +12,16 @@ Shader::Shader(std::string vertShader,std::string fragShader)
 	mProgram = createProgram(mVertexShader,mFragmentShader);
 }
 
+void Shader::bind()
+{
+	glUseProgram(mProgram);
+}
+
+void Shader::unbind()
+{
+	glUseProgram(0);
+}
+
 GLuint Shader::createVertexShader(std::string vertShader)
 {
 	auto id = mVertShaders.find(vertShader);

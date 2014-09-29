@@ -12,6 +12,6 @@ private:
 	std::string mDirectory;
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+	GLuint loadMaterialTexture(aiMaterial* mat, aiTextureType type,GLboolean &success);
 	static std::map<std::string,GLuint> mTextureIDs;
 };

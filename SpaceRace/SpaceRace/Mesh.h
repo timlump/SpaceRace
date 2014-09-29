@@ -9,12 +9,6 @@ struct Vertex
 	glm::vec2 uv;
 };
 
-struct Texture
-{
-	GLuint id;
-	std::string type;
-};
-
 struct Material
 {
 	GLboolean hasDiffuse;
@@ -22,13 +16,24 @@ struct Material
 	GLboolean hasSpecular;
 	GLboolean hasEmission;
 	GLboolean hasShininess;
-	GLboolean hasTextures;
+
+	GLboolean hasDiffuseTexture;
+	GLboolean hasAmbientTexture;
+	GLboolean hasSpecularTexture;
+	GLboolean hasEmissionTexture;
+	GLboolean hasNormalTexture;
+
 	glm::vec4 diffuse;
 	glm::vec4 ambient;
 	glm::vec4 specular;
 	glm::vec4 emission;
 	GLfloat shininess;
-	std::vector<Texture> textures;
+
+	GLuint diffuseTexture;
+	GLuint ambientTexture;
+	GLuint specularTexture;
+	GLuint emissionTexture;
+	GLuint normalTexture;
 };
 
 class Mesh
