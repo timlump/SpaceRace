@@ -6,7 +6,7 @@ std::map<std::string,GLuint> Model::mTextureIDs = std::map<std::string,GLuint>()
 Model::Model(std::string filename)
 {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(filename,aiProcessPreset_TargetRealtime_Fast);
+	const aiScene* scene = import.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality);
 	mDirectory = filename.substr(0,filename.find_last_of('/'));
 	processNode(scene->mRootNode,scene);
 }
@@ -41,7 +41,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	Material material;
 
 	//vertices
-	for(int i = 0 ; i < mesh->mNumFaces ; i++)
+	for(int i = 0 ; i < mesh->mNumVertices ; i++)
 	{
 		Vertex vertex;
 		//positions

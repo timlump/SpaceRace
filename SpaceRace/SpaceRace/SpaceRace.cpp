@@ -72,10 +72,10 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::
 	for(int i = 0 ; i < lights->size() ; i++)
 	{
 		char buffer[80];
-		sprintf(buffer,"lights[%d]",i);
+		sprintf(buffer,"lights[%d].lightPos",i);
 		GLuint lightID = glGetUniformLocation(shader->mProgram,buffer);
 		glUniform3fv(lightID,1,glm::value_ptr((*lights)[i].lightPos));
-	};
+	}
 
 	for(int i = 0 ; i < entities->size() ; i++)
 	{
@@ -150,7 +150,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//load lights
 	std::vector<Light> lights;
 	Light light;
-	light.lightPos = glm::vec3(5.0f,2.0f,0.0f);
+	light.lightPos = glm::vec3(2.0f,1.0f,5.0f);
 	lights.push_back(light);
 
 	//load models
