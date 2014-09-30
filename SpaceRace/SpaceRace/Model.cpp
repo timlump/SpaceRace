@@ -108,10 +108,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		if(AI_SUCCESS == aiGetMaterialColor(mat,AI_MATKEY_COLOR_SPECULAR,&specular))
 		{
 			material.hasSpecular = GL_TRUE;
-			material.specular.r = diffuse.r;
-			material.specular.g = diffuse.g;
-			material.specular.b = diffuse.b;
-			material.specular.a = diffuse.a;
+			material.specular.r = specular.r;
+			material.specular.g = specular.g;
+			material.specular.b = specular.b;
+			material.specular.a = specular.a;
 		}
 		else
 		{
