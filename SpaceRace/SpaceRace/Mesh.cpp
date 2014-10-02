@@ -38,32 +38,73 @@ void Mesh::draw(Shader *shader)
 	GLuint hasEmissionTexture = glGetUniformLocation(shader->mProgram,"material.hasEmissionTexture");
 	glUniform1i(hasEmissionTexture,mMaterial.hasEmissionTexture);
 
-	GLuint diffuse = glGetUniformLocation(shader->mProgram,"material.diffuse");
-	glUniform4fv(diffuse,1,glm::value_ptr(mMaterial.diffuse));
+	if(mMaterial.hasDiffuse)
+	{
+		GLuint diffuse = glGetUniformLocation(shader->mProgram,"material.diffuse");
+		glUniform4fv(diffuse,1,glm::value_ptr(mMaterial.diffuse));
+	}
 
-	GLuint ambient = glGetUniformLocation(shader->mProgram,"material.ambient");
-	glUniform4fv(ambient,1,glm::value_ptr(mMaterial.ambient));
+	if(mMaterial.hasAmbient)
+	{
+		GLuint ambient = glGetUniformLocation(shader->mProgram,"material.ambient");
+		glUniform4fv(ambient,1,glm::value_ptr(mMaterial.ambient));
+	}
 
-	GLuint specular = glGetUniformLocation(shader->mProgram,"material.specular");
-	glUniform4fv(specular,1,glm::value_ptr(mMaterial.specular));
+	if(mMaterial.hasSpecular)
+	{
+		GLuint specular = glGetUniformLocation(shader->mProgram,"material.specular");
+		glUniform4fv(specular,1,glm::value_ptr(mMaterial.specular));
+	}
 
-	GLuint emission = glGetUniformLocation(shader->mProgram,"material.emission");
-	glUniform4fv(emission,1,glm::value_ptr(mMaterial.emission));
+	if(mMaterial.hasEmission)
+	{
+		GLuint emission = glGetUniformLocation(shader->mProgram,"material.emission");
+		glUniform4fv(emission,1,glm::value_ptr(mMaterial.emission));
+	}
 
-	GLuint shininess = glGetUniformLocation(shader->mProgram,"material.shininess");
-	glUniform1f(shininess,mMaterial.shininess);
+	if(mMaterial.hasShininess)
+	{
+		GLuint shininess = glGetUniformLocation(shader->mProgram,"material.shininess");
+		glUniform1f(shininess,mMaterial.shininess);
+	}
 
-	GLuint diffuseTexture = glGetUniformLocation(shader->mProgram,"material.diffuseTexture");
-	glUniform1i(diffuseTexture,mMaterial.diffuseTexture);
+	GLuint textureOffset = 0;
 
-	GLuint ambientTexture = glGetUniformLocation(shader->mProgram,"material.ambientTexture");
-	glUniform1i(ambientTexture,mMaterial.ambientTexture);
+	if(mMaterial.hasDiffuseTexture)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		GLuint diffuseTexture = glGetUniformLocation(shader->mProgram,"material.diffuseTexture");
+		glUniform1i(diffuseTexture,textureOffset);
+		glBindTexture(GL_TEXTURE_2D,mMaterial.diffuseTexture);
+		textureOffset++;
+	}
 
-	GLuint specularTexture = glGetUniformLocation(shader->mProgram,"material.specularTexture");
-	glUniform1i(specularTexture,mMaterial.specularTexture);
+	if(mMaterial.hasAmbientTexture)
+	{
+		glActiveTexture(GL_TEXTURE0+textureOffset);
+		GLuint ambientTexture = glGetUniformLocation(shader->mProgram,"material.ambientTexture");
+		glUniform1i(ambientTexture,textureOffset);
+		glBindTexture(GL_TEXTURE_2D,mMaterial.ambientTexture);
+		textureOffset++;
+	}
 
-	GLuint emissionTexture = glGetUniformLocation(shader->mProgram,"material.emissionTexture");
-	glUniform1i(emissionTexture,mMaterial.emissionTexture);
+	if(mMaterial.hasSpecularTexture)
+	{
+		glActiveTexture(GL_TEXTURE0+textureOffset);
+		GLuint specularTexture = glGetUniformLocation(shader->mProgram,"material.specularTexture");
+		glUniform1i(specularTexture,textureOffset);
+		glBindTexture(GL_TEXTURE_2D,mMaterial.specularTexture);
+		textureOffset++;
+	}
+
+	if(mMaterial.hasEmissionTexture)
+	{
+		glActiveTexture(GL_TEXTURE0+textureOffset);
+		GLuint emissionTexture = glGetUniformLocation(shader->mProgram,"material.emissionTexture");
+		glUniform1i(emissionTexture,textureOffset);
+		glBindTexture(GL_TEXTURE_2D,mMaterial.emissionTexture);
+	}
+	glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(mVAO);
 	glDrawElements(GL_TRIANGLES,mIndices.size(),GL_UNSIGNED_INT,0);

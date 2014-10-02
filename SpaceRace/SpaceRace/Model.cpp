@@ -1,12 +1,36 @@
 #include "stdafx.h"
 #include "Model.h"
+#include "dirent.h"
 
 std::map<std::string,GLuint> Model::mTextureIDs = std::map<std::string,GLuint>();
 
 Model::Model(std::string filename)
 {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality);
+	const aiScene* scene = import.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality|aiProcess_FlipUVs);
+
+	if(scene->HasMeshes())
+	{
+		printf("Model has %d mesh(es)\n",scene->mNumMeshes);
+	}
+
+	if(scene->HasAnimations())
+	{
+		printf("Model has %d animation(s)\n",scene->mNumAnimations);
+		for(int i = 0 ; i < scene->mNumAnimations ; i++)
+		{
+			aiAnimation *anim = scene->mAnimations[i];
+			std::string name(anim->mName.C_Str());
+			if(name.empty())
+			{
+				name = "No Name";
+			}
+			double duration = anim->mDuration;
+			double ticks = anim->mTicksPerSecond;
+			printf("Name: %s Duration: %.2f TicksPerSecond: %.2f\n",name.c_str(),duration,ticks);
+		}
+	}
+
 	mDirectory = filename.substr(0,filename.find_last_of('/'));
 	processNode(scene->mRootNode,scene);
 }
@@ -24,6 +48,12 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	for(int i = 0 ; i < node->mNumMeshes ; i++)
 	{
 		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+
+		if(mesh->HasBones())
+		{
+			printf("Mesh: %d has %d bone(s)\n",i,mesh->mNumBones);
+		}
+
 		Mesh processedMesh = processMesh(mesh,scene);
 		mMeshes.push_back(processedMesh);
 	}
@@ -211,11 +241,9 @@ GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean
 		aiString aName;
 		mat->GetTexture(type,0,&aName);
 		std::string name(aName.C_Str());
-		std::string filename = mDirectory + "//" + name;
-		std::wstring wFilename(filename.begin(),filename.end());
 
 		//see if the texture has already been loaded
-		auto id = mTextureIDs.find(filename);
+		auto id = mTextureIDs.find(name);
 		if(id != mTextureIDs.end())
 		{
 			tex = id->second;
@@ -226,7 +254,14 @@ GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean
 			ILuint devilID;
 			ilGenImages(1,&devilID);
 			ilBindImage(devilID);
-			ilLoadImage(wFilename.c_str());
+			std::string fileName = mDirectory + "/" + name;
+			ILboolean success = ilLoadImage((const ILstring)fileName.c_str());
+
+			if(success == IL_FALSE)
+			{
+				printf("Failed to load texture: %s\n", name.c_str());
+			}
+
 			ilConvertImage(IL_RGBA,IL_UNSIGNED_BYTE);
 
 			GLuint glID;
@@ -234,10 +269,15 @@ GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean
 			glBindTexture(GL_TEXTURE_2D,glID);
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-			glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,ilGetInteger(IL_IMAGE_WIDTH),ilGetInteger(IL_IMAGE_HEIGHT),0,GL_RGBA,GL_UNSIGNED_BYTE,ilGetData());
+
+			ILubyte *data = ilGetData();
+			ILuint width = ilGetInteger(IL_IMAGE_WIDTH);
+			ILuint height = ilGetInteger(IL_IMAGE_HEIGHT);
+
+			glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data);
 			ilDeleteImages(1,&devilID);
 
-			mTextureIDs[filename] = glID;
+			mTextureIDs[name] = glID;
 
 			tex =  glID;
 		}

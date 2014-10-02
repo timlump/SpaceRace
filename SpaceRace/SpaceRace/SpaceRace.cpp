@@ -111,7 +111,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
-	glfwWindowHint(GLFW_SAMPLES,4);
+	glfwWindowHint(GLFW_SAMPLES,16);
 
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode *vmode = glfwGetVideoMode(monitor);
@@ -157,12 +157,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::vector<Entity> entities;
 	
 	Entity entity;
-	Model boxModel =  Model("../../../Media/Models/monkey.dae");
+	Model boxModel =  Model("../../../Media/Models/box.dae");
 	entity.model = &boxModel;
 	entities.push_back(entity);
 
 	Camera camera;
-	camera.position = glm::vec3(0.0f,0.0f,2.0f);
+	camera.position = glm::vec3(0.0f,0.0f,5.0f);
 	camera.projection = glm::perspective(67.0f,(float)vmode->width/vmode->height,0.1f,100.0f);
 	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
 	camera.model = glm::mat4(1.0f);
