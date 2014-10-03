@@ -47,15 +47,30 @@ struct VertexBone
 	int numWeights;
 };
 
+struct BoneAnimation
+{
+	std::vector<aiVector3D> positions;
+	std::vector<aiVector3D> scalings;
+	std::vector<aiQuaternion> rotations;
+};
+
+struct Bone
+{
+	glm::mat4 transform;
+	std::vector<Bone*> children;
+	std::string name;
+};
+
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, Material material);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy, Material material);
 	void draw(Shader *shader);
 	void setup();
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
 	std::vector<VertexBone> mBones;
+	std::vector<Bone*> mBoneHierarchy;
 	Material mMaterial;
 private:
 	GLuint mVAO,mVBO,mEBO,mBBO;

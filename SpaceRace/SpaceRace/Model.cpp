@@ -64,14 +64,8 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
+void Model::processGeometry(aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLuint> &indices)
 {
-	std::vector<Vertex> vertices;
-	std::vector<GLuint> indices;
-	std::vector<VertexBone> bones;
-	Material material;
-
-#pragma region geometry
 	//vertices
 	for(int i = 0 ; i < mesh->mNumVertices ; i++)
 	{
@@ -114,9 +108,18 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 			indices.push_back(face.mIndices[j]);
 		}
 	}
-#pragma endregion geometry
+}
 
-#pragma region materials
+void Model::processMaterial(aiMesh* mesh, const aiScene* scene, Material &material)
+{
+	if(mesh->HasBones())
+	{
+		material.hasBones = GL_TRUE;
+	}
+	else
+	{
+		material.hasBones = GL_FALSE;
+	}
 	//materials
 	if(mesh->mMaterialIndex >= 0)
 	{
@@ -232,11 +235,11 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 		material.emission = glm::vec4(0.0f);
 		material.shininess = 0.0f;
 	}
-#pragma endregion materials
+}
 
-#pragma region bones
-	std::map<GLuint,VertexBone> boneMapping;
-	//fill mapping
+void Model::generateVertexBoneMapping(aiMesh* mesh, std::map<GLuint,VertexBone> &boneMapping)
+{
+	//fill mapping so that every vertex is present
 	for(int i = 0 ; i < mesh->mNumVertices ; i++)
 	{
 		VertexBone entry;
@@ -246,11 +249,11 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 		boneMapping[i] = entry;
 	}
 
-	material.hasBones = GL_FALSE;
 	for(int i = 0 ; i < mesh->mNumBones ; i++)
 	{
-		material.hasBones = GL_TRUE;
 		aiBone *bone = mesh->mBones[i];
+		std::string boneName(bone->mName.data);
+
 		for(int j = 0 ; j < bone->mNumWeights ; j++)
 		{
 			aiVertexWeight *weight = &bone->mWeights[j];
@@ -266,6 +269,76 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 			}
 		}
 	}
+}
+
+void Model::generateBoneNameToIndexMapping(aiMesh* mesh, std::map<std::string,int> &boneNameToIndex)
+{
+	for(int i = 0 ; i < mesh->mNumBones ; i++)
+	{
+		aiBone *bone = mesh->mBones[i];
+
+		std::string boneName(bone->mName.data);
+		boneNameToIndex[boneName] = i;
+	}
+}
+
+glm::mat4 Model::aMat4toGLMMat4(aiMatrix4x4 &matrix)
+{
+	glm::mat4 result;
+
+	for(int i = 0 ; i < 4 ; i++)
+	{
+		for(int j = 0 ; j < 4 ; j++)
+		{
+			result[i][j] = matrix[j][i];
+		}
+	}
+
+	return result;
+}
+
+void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::map<std::string,int> &boneIndices, std::vector<Bone*> &bones)
+{
+	//check if current node is a bone
+	std::string name(node->mName.data);
+	auto boneEntry = boneIndices.find(name);
+	if(boneEntry!=boneIndices.end())
+	{
+		aiBone *b = mesh->mBones[boneEntry->second];
+
+		Bone *bone = new Bone();
+		bone->name = name;
+		bone->transform = aMat4toGLMMat4(b->mOffsetMatrix);
+		bones.push_back(bone);
+		for(int i = 0 ; i < node->mNumChildren ; i++)
+		{
+			traverseAndGenerateBoneHierarchy(node->mChildren[i],mesh,boneIndices,bone->children);
+		}
+	}
+	else
+	{
+		for(int i = 0 ; i < node->mNumChildren ; i++)
+		{
+			traverseAndGenerateBoneHierarchy(node->mChildren[i],mesh,boneIndices,bones);
+		}
+	}
+}
+
+Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
+{
+	std::vector<Vertex> vertices;
+	std::vector<GLuint> indices;
+	std::vector<VertexBone> bones;
+	std::vector<Bone*> boneHierarchy;
+	std::map<GLuint,VertexBone> boneMapping;
+	std::map<std::string,int> boneNameToIndex;
+
+	Material material;
+
+	processGeometry(mesh,vertices,indices);
+	processMaterial(mesh,scene,material);
+	generateVertexBoneMapping(mesh,boneMapping);
+	generateBoneNameToIndexMapping(mesh,boneNameToIndex);
 
 	//convert mapping to vector - taking advantage of the fact that a map is implicitly sorted
 	std::map<GLuint,VertexBone>::iterator it;
@@ -273,9 +346,14 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	{
 		bones.push_back(it->second);
 	}
-#pragma endregion bones
 
-	return Mesh(vertices,indices,bones,material);
+	traverseAndGenerateBoneHierarchy(scene->mRootNode,mesh,boneNameToIndex,boneHierarchy);
+
+#pragma region animations
+
+#pragma endregion animations
+
+	return Mesh(vertices,indices,bones,boneHierarchy,material);
 }
 
 GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)
