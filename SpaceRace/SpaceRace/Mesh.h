@@ -50,11 +50,12 @@ struct VertexBone
 struct BoneAnimation
 {
 	std::string name;
+	int index;
 	double duration;
 	double ticksPerSecond;
-	std::vector<aiVector3D> positions;
-	std::vector<aiVector3D> scalings;
-	std::vector<aiQuaternion> rotations;
+	std::vector<aiVectorKey> positions;
+	std::vector<aiVectorKey> scalings;
+	std::vector<aiQuatKey> rotations;
 };
 
 struct Bone
@@ -62,19 +63,22 @@ struct Bone
 	glm::mat4 transform;
 	std::vector<Bone*> children;
 	std::string name;
+	int index;
 };
 
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy,std::vector<std::map<std::string,BoneAnimation>> animations, Material material);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<std::string,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material);
 	void draw(Shader *shader);
 	void setup();
+	void animate(std::string name,double time);
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
 	std::vector<VertexBone> mBones;
 	std::vector<Bone*> mBoneHierarchy;
-	std::vector<std::map<std::string,BoneAnimation>> mAnimations;
+	std::map<std::string,std::map<std::string,BoneAnimation>> mAnimations;
+	std::vector<glm::mat4> mBoneTransforms;
 	Material mMaterial;
 private:
 	GLuint mVAO,mVBO,mEBO,mBBO;

@@ -308,6 +308,7 @@ void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::ma
 
 		Bone *bone = new Bone();
 		bone->name = name;
+		bone->index = boneEntry->second;
 		bone->transform = aMat4toGLMMat4(b->mOffsetMatrix);
 		bones.push_back(bone);
 		for(int i = 0 ; i < node->mNumChildren ; i++)
@@ -324,23 +325,45 @@ void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::ma
 	}
 }
 
-void Model::processAnimations(const aiScene* scene, std::map<std::string,int> &boneIndices, std::vector<std::map<std::string,BoneAnimation>> animations)
+void Model::processAnimations(const aiScene* scene, std::map<std::string,int> &boneIndices, std::map<std::string,std::map<std::string,BoneAnimation>> &animations)
 {
 	for(int i = 0 ; i < scene->mNumAnimations ; i++)
 	{
 		aiAnimation *anim = scene->mAnimations[i];
+		std::string animName(anim->mName.data);
+		std::map<std::string,BoneAnimation> animationMap;
 		for(int j = 0 ; j < anim->mNumChannels ; j++)
 		{
-			std::map<std::string,BoneAnimation> animation;
 			aiNodeAnim *node = anim->mChannels[j];
 			//check to see if it applies to a bone
 			std::string name(node->mNodeName.data);
 			auto boneEntry = boneIndices.find(name);
 			if(boneEntry != boneIndices.end())
 			{
-				printf("num keysL %d\n",node->mNumPositionKeys);
+				BoneAnimation animation;
+				animation.name = name;
+				animation.index = boneEntry->second;
+				animation.duration = anim->mDuration;
+				animation.ticksPerSecond = anim->mTicksPerSecond;
+				for(int k = 0 ; k < node->mNumPositionKeys ; k++)
+				{
+					aiVectorKey key = node->mPositionKeys[k];
+					animation.positions.push_back(key);
+				}
+				for(int k = 0 ; k < node->mNumRotationKeys ; k++)
+				{
+					aiQuatKey key = node->mRotationKeys[k];
+					animation.rotations.push_back(key);
+				}
+				for(int k = 0 ; k < node->mNumScalingKeys ; k++)
+				{
+					aiVectorKey key = node->mScalingKeys[k];
+					animation.scalings.push_back(key);
+				}
+				animationMap[name] = animation;
 			}
 		}
+		animations[animName] = animationMap;
 	}
 }
 
@@ -352,9 +375,10 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	std::vector<Bone*> boneHierarchy;
 	std::map<GLuint,VertexBone> boneMapping;
 	std::map<std::string,int> boneNameToIndex;
+	std::vector<glm::mat4> boneTransforms;
 
 	Material material;
-	std::vector<std::map<std::string,BoneAnimation>> animations; 
+	std::map<std::string,std::map<std::string,BoneAnimation>> animations; 
 
 	processGeometry(mesh,vertices,indices);
 	processMaterial(mesh,scene,material);
@@ -366,12 +390,13 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	for(it = boneMapping.begin(); it != boneMapping.end() ; ++it)
 	{
 		bones.push_back(it->second);
+		boneTransforms.push_back(glm::mat4(1.0f));
 	}
 
 	traverseAndGenerateBoneHierarchy(scene->mRootNode,mesh,boneNameToIndex,boneHierarchy);
 	processAnimations(scene,boneNameToIndex,animations);
 
-	return Mesh(vertices,indices,bones,boneHierarchy,animations,material);
+	return Mesh(vertices,indices,bones,boneHierarchy,animations,boneTransforms,material);
 }
 
 GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)

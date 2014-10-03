@@ -1,15 +1,21 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy,std::vector<std::map<std::string,BoneAnimation>> animations, Material material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<std::string,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material)
 {
 	mVertices = vertices;
 	mIndices = indices;
 	mBones = bones;
 	mBoneHierarchy = boneHierarchy;
+	mBoneTransforms = boneTransforms;
 	mAnimations = animations;
 	mMaterial = material;
 	setup();
+}
+
+void Mesh::animate(std::string name,double time)
+{
+	//traverse bone tree
 }
 
 void Mesh::draw(Shader *shader)
@@ -17,6 +23,17 @@ void Mesh::draw(Shader *shader)
 #pragma region uniforms
 	GLuint hasBones = glGetUniformLocation(shader->mProgram,"hasBones");
 	glUniform1i(hasBones,mMaterial.hasBones);
+
+	if(mMaterial.hasBones)
+	{
+		for(int i = 0 ; i < mBoneTransforms.size() ; i++)
+		{
+			char buffer[80];
+			sprintf(buffer,"bones[%d]",i);
+			GLuint bones = glGetUniformLocation(shader->mProgram,buffer);
+			glUniformMatrix4fv(bones,1,GL_FALSE,glm::value_ptr(mBoneTransforms[i]));
+		}
+	}
 
 	GLuint hasDiffuse = glGetUniformLocation(shader->mProgram,"material.hasDiffuse");
 	glUniform1i(hasDiffuse,mMaterial.hasDiffuse);
