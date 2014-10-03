@@ -14,6 +14,7 @@ private:
 	Mesh processMesh(int index, aiMesh* mesh, const aiScene* scene);
 	void processGeometry(aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLuint> &indices);
 	void processMaterial(aiMesh* mesh, const aiScene* scene, Material &material);
+	void processAnimations(const aiScene* scene, std::map<std::string,int> &boneIndices, std::vector<std::map<std::string,BoneAnimation>> animations);
 	void generateVertexBoneMapping(aiMesh* mesh, std::map<GLuint,VertexBone> &boneMapping);
 	void generateBoneNameToIndexMapping(aiMesh* mesh, std::map<std::string,int> &boneNameToIndex);
 	void traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::map<std::string,int> &boneIndices, std::vector<Bone*> &bones);

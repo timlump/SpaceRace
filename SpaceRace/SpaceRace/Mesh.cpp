@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy, Material material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy,std::vector<std::map<std::string,BoneAnimation>> animations, Material material)
 {
 	mVertices = vertices;
 	mIndices = indices;
 	mBones = bones;
 	mBoneHierarchy = boneHierarchy;
+	mAnimations = animations;
 	mMaterial = material;
 	setup();
 }
