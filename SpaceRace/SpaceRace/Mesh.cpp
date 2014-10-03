@@ -1,16 +1,21 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, Material material)
 {
 	mVertices = vertices;
 	mIndices = indices;
+	mBones = bones;
 	mMaterial = material;
 	setup();
 }
 
 void Mesh::draw(Shader *shader)
 {
+#pragma region uniforms
+	GLuint hasBones = glGetUniformLocation(shader->mProgram,"hasBones");
+	glUniform1i(hasBones,mMaterial.hasBones);
+
 	GLuint hasDiffuse = glGetUniformLocation(shader->mProgram,"material.hasDiffuse");
 	glUniform1i(hasDiffuse,mMaterial.hasDiffuse);
 
@@ -105,6 +110,7 @@ void Mesh::draw(Shader *shader)
 		glBindTexture(GL_TEXTURE_2D,mMaterial.emissionTexture);
 	}
 	glActiveTexture(GL_TEXTURE0);
+#pragma endregion uniforms
 
 	glBindVertexArray(mVAO);
 	glDrawElements(GL_TRIANGLES,mIndices.size(),GL_UNSIGNED_INT,0);
@@ -136,6 +142,20 @@ void Mesh::setup()
 	////texture coords
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),(GLvoid*)(sizeof(glm::vec3)*2));
+
+	glGenBuffers(1,&mBBO);
+	glBindBuffer(GL_ARRAY_BUFFER,mBBO);
+	glBufferData(GL_ARRAY_BUFFER,mBones.size()*sizeof(VertexBone),&mBones[0],GL_STATIC_DRAW);
+
+	//bones
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3,4,GL_INT,GL_FALSE,sizeof(VertexBone),(GLvoid*)0);
+
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4,4,GL_FLOAT,GL_FALSE,sizeof(VertexBone),(GLvoid*)(sizeof(glm::ivec4)));
+
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5,1,GL_INT,GL_FALSE,sizeof(VertexBone),(GLvoid*)(sizeof(glm::ivec4)+sizeof(glm::vec4)));
 
 	glBindVertexArray(0);
 }

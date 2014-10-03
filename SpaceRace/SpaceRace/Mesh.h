@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Shader.h"
 
+#define BONES_PER_VERTEX 4
+
 //derived from http://learnopengl.com/#!Model-Loading/Mesh
 struct Vertex
 {
@@ -23,6 +25,8 @@ struct Material
 	GLboolean hasEmissionTexture;
 	GLboolean hasNormalTexture;
 
+	GLboolean hasBones;
+
 	glm::vec4 diffuse;
 	glm::vec4 ambient;
 	glm::vec4 specular;
@@ -36,15 +40,23 @@ struct Material
 	GLuint normalTexture;
 };
 
+struct VertexBone
+{
+	glm::ivec4 boneIDs;
+	glm::vec4 boneWeights;
+	int numWeights;
+};
+
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, Material material);
 	void draw(Shader *shader);
 	void setup();
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
+	std::vector<VertexBone> mBones;
 	Material mMaterial;
 private:
-	GLuint mVAO,mVBO,mEBO;
+	GLuint mVAO,mVBO,mEBO,mBBO;
 };

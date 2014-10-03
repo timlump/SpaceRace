@@ -54,7 +54,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 			printf("Mesh: %d has %d bone(s)\n",i,mesh->mNumBones);
 		}
 
-		Mesh processedMesh = processMesh(mesh,scene);
+		Mesh processedMesh = processMesh(i,mesh,scene);
 		mMeshes.push_back(processedMesh);
 	}
 
@@ -64,12 +64,14 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
+	std::vector<VertexBone> bones;
 	Material material;
 
+#pragma region geometry
 	//vertices
 	for(int i = 0 ; i < mesh->mNumVertices ; i++)
 	{
@@ -112,7 +114,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			indices.push_back(face.mIndices[j]);
 		}
 	}
+#pragma endregion geometry
 
+#pragma region materials
 	//materials
 	if(mesh->mMaterialIndex >= 0)
 	{
@@ -228,8 +232,50 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		material.emission = glm::vec4(0.0f);
 		material.shininess = 0.0f;
 	}
+#pragma endregion materials
 
-	return Mesh(vertices,indices,material);
+#pragma region bones
+	std::map<GLuint,VertexBone> boneMapping;
+	//fill mapping
+	for(int i = 0 ; i < mesh->mNumVertices ; i++)
+	{
+		VertexBone entry;
+		entry.numWeights = 0;
+		entry.boneWeights = glm::vec4(0.0f);
+		entry.boneIDs = glm::ivec4(0);
+		boneMapping[i] = entry;
+	}
+
+	material.hasBones = GL_FALSE;
+	for(int i = 0 ; i < mesh->mNumBones ; i++)
+	{
+		material.hasBones = GL_TRUE;
+		aiBone *bone = mesh->mBones[i];
+		for(int j = 0 ; j < bone->mNumWeights ; j++)
+		{
+			aiVertexWeight *weight = &bone->mWeights[j];
+			GLuint vertexID = weight->mVertexId;
+			//see if the vertex doesn't exist
+			auto boneEntry = boneMapping.find(vertexID);
+			if(boneEntry->second.numWeights+1 < BONES_PER_VERTEX)
+			{
+				int index = boneEntry->second.numWeights;
+				boneEntry->second.numWeights++;
+				boneEntry->second.boneIDs[index] = i;
+				boneEntry->second.boneWeights[index] = weight->mWeight;
+			}
+		}
+	}
+
+	//convert mapping to vector - taking advantage of the fact that a map is implicitly sorted
+	std::map<GLuint,VertexBone>::iterator it;
+	for(it = boneMapping.begin(); it != boneMapping.end() ; ++it)
+	{
+		bones.push_back(it->second);
+	}
+#pragma endregion bones
+
+	return Mesh(vertices,indices,bones,material);
 }
 
 GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)
