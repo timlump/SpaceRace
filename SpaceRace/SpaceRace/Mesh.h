@@ -81,5 +81,6 @@ public:
 	std::vector<glm::mat4> mBoneTransforms;
 	Material mMaterial;
 private:
+	void traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<std::string,BoneAnimation> &animation, double time, glm::mat4 &parentTransform);
 	GLuint mVAO,mVBO,mEBO,mBBO;
 };

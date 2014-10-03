@@ -15,7 +15,16 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 
 void Mesh::animate(std::string name,double time)
 {
-	//traverse bone tree
+	auto animEntry = mAnimations.find(name);
+	if(animEntry != mAnimations.end())
+	{
+
+	}
+}
+
+void traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<std::string,BoneAnimation> &animation, double time, glm::mat4 &parentTransform)
+{
+
 }
 
 void Mesh::draw(Shader *shader)

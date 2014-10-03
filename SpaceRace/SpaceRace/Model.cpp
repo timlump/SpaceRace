@@ -390,6 +390,10 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	for(it = boneMapping.begin(); it != boneMapping.end() ; ++it)
 	{
 		bones.push_back(it->second);
+	}
+
+	for(int i = 0 ; i < mesh->mNumBones ; i++)
+	{
 		boneTransforms.push_back(glm::mat4(1.0f));
 	}
 
