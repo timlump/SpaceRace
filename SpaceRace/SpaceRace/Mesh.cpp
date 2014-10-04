@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<std::string,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material, glm::mat4 inverseSceneTransform)
 {
 	mVertices = vertices;
 	mIndices = indices;
@@ -10,6 +10,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 	mBoneTransforms = boneTransforms;
 	mAnimations = animations;
 	mMaterial = material;
+	mInverseSceneTransform = inverseSceneTransform;
+	mBoneOffsets = boneOffsets;
 	setup();
 }
 
@@ -18,13 +20,58 @@ void Mesh::animate(std::string name,double time)
 	auto animEntry = mAnimations.find(name);
 	if(animEntry != mAnimations.end())
 	{
-
+		traverseTreeApplyTransformations(mBoneHierarchy,animEntry->second,time,glm::mat4(1.0f));
 	}
 }
 
-void traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<std::string,BoneAnimation> &animation, double time, glm::mat4 &parentTransform)
+glm::mat4 Mesh::calculatePosition(BoneAnimation *anim)
 {
+	return glm::mat4(1.0);
+}
 
+glm::mat4 Mesh::calculateScale(BoneAnimation *anim)
+{
+	return glm::mat4(1.0);
+}
+
+glm::mat4 Mesh::calculateRotation(BoneAnimation *anim)
+{
+	return glm::mat4(1.0);
+}
+
+void Mesh::traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform)
+{
+	for(int i = 0 ; i < bone.size() ; i++)
+	{
+		Bone* b = bone[i];
+		int index = b->index;
+
+		//calculate current time
+		BoneAnimation *anim = &animation[index];
+		anim->currentTick += timeStep*anim->ticksPerSecond;
+		if(anim->currentTick>anim->duration)
+		{
+			anim->currentTick = 0.0;
+		}
+
+		//find current position
+		glm::mat4 translation = calculatePosition(anim);
+
+		//find current scale
+		glm::mat4 scale = calculateScale(anim);
+
+		//find current rotation
+		glm::mat4 rotation = calculateRotation(anim);
+
+		//calculate bone transform
+		glm::mat4 boneTransform = translation*rotation*scale;
+
+		//apply transform
+		mBoneTransforms[index] = mInverseSceneTransform*(parentTransform*boneTransform)*mBoneOffsets[index];
+
+		//pass it on
+		traverseTreeApplyTransformations(b->children,animation,timeStep,b->transform);
+	}
 }
 
 void Mesh::draw(Shader *shader)

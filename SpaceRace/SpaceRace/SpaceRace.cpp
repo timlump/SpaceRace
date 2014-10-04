@@ -41,9 +41,21 @@ void updateFrameRate(GLFWwindow *window)
 	frameCount++;
 };
 
-void logic(lua_State *luaState)
+double getTimeStep()
 {
+	static double prevTime = glfwGetTime();
+	double currentTime = glfwGetTime();
+	double diff = currentTime-prevTime;
+	prevTime = currentTime;
+	return diff;
+}
 
+void logic(std::vector<Entity> *entities, lua_State *luaState)
+{
+	for(int i = 0 ; i < entities->size() ; i++)
+	{
+		(*entities)[i].model->animate("",getTimeStep());
+	}
 }
 
 void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::vector<Light> *lights,Camera *camera)
@@ -174,7 +186,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	while(!glfwWindowShouldClose(window))
 	{
 		updateFrameRate(window);
-		logic(luaState);
+		logic(&entities,luaState);
 		draw(window,&gameShader,&entities,&lights,&camera);
 		io(window);
 	}
