@@ -62,6 +62,7 @@ struct BoneAnimation
 struct Bone
 {
 	glm::mat4 transform;
+	glm::mat4 offset;
 	std::vector<Bone*> children;
 	std::string name;
 	int index;
@@ -70,7 +71,7 @@ struct Bone
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets ,std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material, glm::mat4 inverseSceneTransform);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets ,std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material);
 	void draw(Shader *shader);
 	void setup();
 	void animate(std::string name,double time);
@@ -86,7 +87,7 @@ private:
 	glm::mat4 calculatePosition(BoneAnimation *anim);
 	glm::mat4 calculateScale(BoneAnimation *anim);
 	glm::mat4 calculateRotation(BoneAnimation *anim);
-	void traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform);
+	void traverseTreeApplyTransformations(Bone* bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform);
 	GLuint mVAO,mVBO,mEBO,mBBO;
 	glm::mat4 mInverseSceneTransform;
 };

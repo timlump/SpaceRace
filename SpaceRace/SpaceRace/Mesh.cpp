@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material, glm::mat4 inverseSceneTransform)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material)
 {
 	mVertices = vertices;
 	mIndices = indices;
@@ -10,7 +10,6 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 	mBoneTransforms = boneTransforms;
 	mAnimations = animations;
 	mMaterial = material;
-	mInverseSceneTransform = inverseSceneTransform;
 	mBoneOffsets = boneOffsets;
 	setup();
 }
@@ -20,7 +19,11 @@ void Mesh::animate(std::string name,double time)
 	auto animEntry = mAnimations.find(name);
 	if(animEntry != mAnimations.end())
 	{
-		traverseTreeApplyTransformations(mBoneHierarchy,animEntry->second,time,glm::mat4(1.0f));
+		for(int i = 0 ; i < mBoneHierarchy.size() ; i++)
+		{
+			Bone *bone = mBoneHierarchy[i];
+			traverseTreeApplyTransformations(bone,animEntry->second,time,glm::mat4(1.0f));
+		}
 	}
 }
 
@@ -39,13 +42,13 @@ glm::mat4 Mesh::calculateRotation(BoneAnimation *anim)
 	return glm::mat4(1.0);
 }
 
-void Mesh::traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform)
+void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform)
 {
-	for(int i = 0 ; i < bone.size() ; i++)
-	{
-		Bone* b = bone[i];
-		int index = b->index;
+	Bone* b = bone;
+	int index = b->index;
 
+	if(index != -1)
+	{
 		//calculate current time
 		BoneAnimation *anim = &animation[index];
 		anim->currentTick += timeStep*anim->ticksPerSecond;
@@ -53,6 +56,8 @@ void Mesh::traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<in
 		{
 			anim->currentTick = 0.0;
 		}
+
+		//calculate local transform
 
 		//find current position
 		glm::mat4 translation = calculatePosition(anim);
@@ -64,13 +69,23 @@ void Mesh::traverseTreeApplyTransformations(std::vector<Bone*> bone, std::map<in
 		glm::mat4 rotation = calculateRotation(anim);
 
 		//calculate bone transform
-		glm::mat4 boneTransform = translation*rotation*scale;
+		glm::mat4 localTransform = translation*rotation*scale;
+
+		//calculate global transform
+		glm::mat4 offset = mBoneOffsets[index];
+		glm::mat4 invOffset = glm::inverse(offset);
+		glm::mat4 globalTransform = parentTransform*invOffset*localTransform*offset;
 
 		//apply transform
-		mBoneTransforms[index] = mInverseSceneTransform*(parentTransform*boneTransform)*mBoneOffsets[index];
+		b->transform = globalTransform;
+		mBoneTransforms[index] = b->transform;
+	}
 
-		//pass it on
-		traverseTreeApplyTransformations(b->children,animation,timeStep,b->transform);
+	//pass it on
+	for (int i = 0 ; i < b->children.size() ; i++)
+	{
+		Bone *child = b->children[i];
+		traverseTreeApplyTransformations(child,animation,timeStep,b->transform);
 	}
 }
 
@@ -224,13 +239,10 @@ void Mesh::setup()
 
 	//bones
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3,4,GL_INT,GL_FALSE,sizeof(VertexBone),(GLvoid*)0);
+	glVertexAttribIPointer(3,4,GL_INT,sizeof(VertexBone),(GLvoid*)0);
 
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4,4,GL_FLOAT,GL_FALSE,sizeof(VertexBone),(GLvoid*)(sizeof(glm::ivec4)));
-
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5,1,GL_INT,GL_FALSE,sizeof(VertexBone),(GLvoid*)(sizeof(glm::ivec4)+sizeof(glm::vec4)));
 
 	glBindVertexArray(0);
 }

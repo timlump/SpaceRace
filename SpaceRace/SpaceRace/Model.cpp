@@ -282,46 +282,44 @@ void Model::generateBoneNameToIndexMapping(aiMesh* mesh, std::map<std::string,in
 	}
 }
 
+//anton's tutorials
 glm::mat4 Model::aMat4toGLMMat4(aiMatrix4x4 &matrix)
 {
-	glm::mat4 result;
-
-	for(int i = 0 ; i < 4 ; i++)
-	{
-		for(int j = 0 ; j < 4 ; j++)
-		{
-			result[i][j] = matrix[j][i];
-		}
-	}
-
-	return result;
+	return glm::mat4(
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		matrix.a4,matrix.b4,matrix.c4,matrix.d4);
 }
 
+//inspired by http://pastebin.com/YaTamEct
 void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::map<std::string,int> &boneIndices, std::vector<Bone*> &bones)
 {
 	//check if current node is a bone
 	std::string name(node->mName.data);
 	auto boneEntry = boneIndices.find(name);
+	Bone *bone = new Bone();
 	if(boneEntry!=boneIndices.end())
 	{
 		aiBone *b = mesh->mBones[boneEntry->second];
 
-		Bone *bone = new Bone();
 		bone->name = name;
 		bone->index = boneEntry->second;
-		bone->transform = aMat4toGLMMat4(b->mOffsetMatrix);
+		bone->offset = aMat4toGLMMat4(b->mOffsetMatrix);
+		bone->transform = glm::mat4(1.0);
 		bones.push_back(bone);
-		for(int i = 0 ; i < node->mNumChildren ; i++)
-		{
-			traverseAndGenerateBoneHierarchy(node->mChildren[i],mesh,boneIndices,bone->children);
-		}
 	}
 	else
 	{
-		for(int i = 0 ; i < node->mNumChildren ; i++)
-		{
-			traverseAndGenerateBoneHierarchy(node->mChildren[i],mesh,boneIndices,bones);
-		}
+		bone->name = name;
+		bone->index = -1;
+		bone->offset = glm::mat4(1.0);
+		bone->transform = aMat4toGLMMat4(node->mTransformation);
+		bones.push_back(bone);
+	}
+	for(int i = 0 ; i < node->mNumChildren ; i++)
+	{
+		traverseAndGenerateBoneHierarchy(node->mChildren[i],mesh,boneIndices,bone->children);
 	}
 }
 
@@ -385,7 +383,6 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	std::map<GLuint,VertexBone> boneMapping;
 	std::map<std::string,int> boneNameToIndex;
 	std::vector<glm::mat4> boneTransforms;
-	glm::mat4 inverseSceneTransform = aMat4toGLMMat4(scene->mRootNode->mTransformation);
 	std::vector<glm::mat4> boneOffsets;
 
 	Material material;
@@ -412,7 +409,7 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	traverseAndGenerateBoneHierarchy(scene->mRootNode,mesh,boneNameToIndex,boneHierarchy);
 	processAnimations(scene,boneNameToIndex,animations);
 
-	return Mesh(vertices,indices,bones,boneOffsets,boneHierarchy,animations,boneTransforms,material,inverseSceneTransform);
+	return Mesh(vertices,indices,bones,boneOffsets,boneHierarchy,animations,boneTransforms,material);
 }
 
 GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)
