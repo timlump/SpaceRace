@@ -47,7 +47,7 @@ glm::vec3 Mesh::aVec3toGLMVec3(aiVector3D &vector)
 
 glm::quat Mesh::aQuattoGLMQuat(aiQuaternion &quat)
 {
-	return glm::quat(quat.x,quat.y,quat.z,quat.w);
+	return glm::quat(quat.w,quat.x,quat.y,quat.z);
 }
 
 glm::vec3 Mesh::lerp(float &time, glm::vec3 &start, glm::vec3 &end)
@@ -125,9 +125,8 @@ glm::mat4 Mesh::calculateRotation(BoneAnimation *anim)
 	//if only one key
 	if(anim->rotations.size() == 1)
 	{
-		aiMatrix3x3 rotateMat3 = anim->rotations[0].mValue.GetMatrix();
-		aiMatrix4x4 rotateMat4(rotateMat3);
-		result = result*aMat4toGLMMat4(rotateMat4);
+		glm::quat rot = aQuattoGLMQuat(anim->rotations[0].mValue);
+		result = glm::mat4_cast(rot);
 
 	}
 	//if many keys
@@ -141,18 +140,15 @@ glm::mat4 Mesh::calculateRotation(BoneAnimation *anim)
 			//check if range is correct
 			if(anim->currentTick >= before.mTime && anim->currentTick < after.mTime)
 			{
-				aiQuaternion start = before.mValue;
-				aiQuaternion end = after.mValue;
+				glm::quat start = aQuattoGLMQuat(before.mValue);
+				glm::quat end = aQuattoGLMQuat(after.mValue);
 
 				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
-				printf("Time: %f\n",time);
-				aiQuaternion out;
-				aiQuaternion::Interpolate(out,start,end,time);
-				aiMatrix3x3 rotateMat3 = out.GetMatrix();
-				aiMatrix4x4 rotateMat4(rotateMat3);
 
-				result = result*aMat4toGLMMat4(rotateMat4);
-				return result;
+				glm::quat rot = glm::slerp(start,end,time);
+
+				result = glm::mat4_cast(rot);
+				break;
 			}
 		}
 	}

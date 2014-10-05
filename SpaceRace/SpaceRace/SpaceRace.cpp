@@ -169,8 +169,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::vector<Entity> entities;
 	
 	Entity entity;
-	Model boxModel =  Model("../../../Media/Models/box.dae");
-	entity.model = &boxModel;
+	Model objectModel =  Model("../../../Media/Models/box.dae");
+	entity.model = &objectModel;
 	entities.push_back(entity);
 
 	Camera camera;
