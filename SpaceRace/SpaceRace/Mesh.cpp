@@ -27,19 +27,136 @@ void Mesh::animate(std::string name,double time)
 	}
 }
 
+glm::mat4 Mesh::aMat4toGLMMat4(aiMatrix4x4 &matrix)
+{
+	glm::mat4 result;
+	for(int i = 0 ; i < 4 ; i++)
+	{
+		for(int j = 0 ; j < 4 ; j++)
+		{
+			result[i][j] = matrix[j][i];
+		}
+	}
+	return result;
+}
+
+glm::vec3 Mesh::aVec3toGLMVec3(aiVector3D &vector)
+{
+	return glm::vec3(vector.x,vector.y,vector.z);
+}
+
+glm::quat Mesh::aQuattoGLMQuat(aiQuaternion &quat)
+{
+	return glm::quat(quat.x,quat.y,quat.z,quat.w);
+}
+
+glm::vec3 Mesh::lerp(float &time, glm::vec3 &start, glm::vec3 &end)
+{
+	return start*(1.0f-time) + end*time;
+}
+
 glm::mat4 Mesh::calculatePosition(BoneAnimation *anim)
 {
-	return glm::mat4(1.0);
+	glm::mat4 result(1.0f);
+	//if only one key
+	if(anim->positions.size() == 1)
+	{
+		glm::vec3 translate = aVec3toGLMVec3(anim->positions[0].mValue);
+		result = glm::translate(result,translate);
+	}
+	//if many keys
+	else
+	{
+		//find current range
+		for(int i = 0 ; i < anim->positions.size()-1 ; i++)
+		{
+			aiVectorKey before = anim->positions[i];
+			aiVectorKey after = anim->positions[i+1];
+			//check if range is correct
+			if(anim->currentTick >= before.mTime && anim->currentTick < after.mTime)
+			{
+				glm::vec3 start = aVec3toGLMVec3(before.mValue);
+				glm::vec3 end = aVec3toGLMVec3(after.mValue);
+
+				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
+				result = glm::translate(result,lerp(time,start,end));
+				break;
+			}
+		}
+	}
+	return result;
 }
 
 glm::mat4 Mesh::calculateScale(BoneAnimation *anim)
 {
-	return glm::mat4(1.0);
+	glm::mat4 result(1.0f);
+	//if only one key
+	if(anim->scalings.size() == 1)
+	{
+		glm::vec3 scale = aVec3toGLMVec3(anim->scalings[0].mValue);
+		result = glm::scale(result,scale);
+	}
+	//if many keys
+	else
+	{
+		//find current range
+		for(int i = 0 ; i < anim->scalings.size()-1 ; i++)
+		{
+			aiVectorKey before = anim->scalings[i];
+			aiVectorKey after = anim->scalings[i+1];
+			//check if range is correct
+			if(anim->currentTick >= before.mTime && anim->currentTick < after.mTime)
+			{
+				glm::vec3 start = aVec3toGLMVec3(before.mValue);
+				glm::vec3 end = aVec3toGLMVec3(after.mValue);
+
+				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
+				result = glm::scale(result,lerp(time,start,end));
+				break;
+			}
+		}
+	}
+	return result;
 }
 
 glm::mat4 Mesh::calculateRotation(BoneAnimation *anim)
 {
-	return glm::mat4(1.0);
+	glm::mat4 result(1.0f);
+	//if only one key
+	if(anim->rotations.size() == 1)
+	{
+		aiMatrix3x3 rotateMat3 = anim->rotations[0].mValue.GetMatrix();
+		aiMatrix4x4 rotateMat4(rotateMat3);
+		result = result*aMat4toGLMMat4(rotateMat4);
+
+	}
+	//if many keys
+	else
+	{
+		//find current range
+		for(int i = 0 ; i < anim->rotations.size()-1 ; i++)
+		{
+			aiQuatKey before = anim->rotations[i];
+			aiQuatKey after = anim->rotations[i+1];
+			//check if range is correct
+			if(anim->currentTick >= before.mTime && anim->currentTick < after.mTime)
+			{
+				aiQuaternion start = before.mValue;
+				aiQuaternion end = after.mValue;
+
+				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
+				printf("Time: %f\n",time);
+				aiQuaternion out;
+				aiQuaternion::Interpolate(out,start,end,time);
+				aiMatrix3x3 rotateMat3 = out.GetMatrix();
+				aiMatrix4x4 rotateMat4(rotateMat3);
+
+				result = result*aMat4toGLMMat4(rotateMat4);
+				return result;
+			}
+		}
+	}
+	return result;
 }
 
 void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform)

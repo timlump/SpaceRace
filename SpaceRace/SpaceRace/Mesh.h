@@ -75,6 +75,16 @@ public:
 	void draw(Shader *shader);
 	void setup();
 	void animate(std::string name,double time);
+	static glm::mat4 aMat4toGLMMat4(aiMatrix4x4 &matrix);
+	static glm::vec3 aVec3toGLMVec3(aiVector3D &vector);
+	static glm::quat aQuattoGLMQuat(aiQuaternion &quat);
+	static glm::vec3 lerp(float &time, glm::vec3 &start, glm::vec3 &end);
+private:
+	glm::mat4 calculatePosition(BoneAnimation *anim);
+	glm::mat4 calculateScale(BoneAnimation *anim);
+	glm::mat4 calculateRotation(BoneAnimation *anim);
+	void traverseTreeApplyTransformations(Bone* bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform);
+
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
 	std::vector<VertexBone> mBones;
@@ -83,11 +93,5 @@ public:
 	std::map<std::string,std::map<int,BoneAnimation>> mAnimations;
 	std::vector<glm::mat4> mBoneTransforms;
 	Material mMaterial;
-private:
-	glm::mat4 calculatePosition(BoneAnimation *anim);
-	glm::mat4 calculateScale(BoneAnimation *anim);
-	glm::mat4 calculateRotation(BoneAnimation *anim);
-	void traverseTreeApplyTransformations(Bone* bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform);
 	GLuint mVAO,mVBO,mEBO,mBBO;
-	glm::mat4 mInverseSceneTransform;
 };

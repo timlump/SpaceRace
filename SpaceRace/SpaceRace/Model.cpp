@@ -282,16 +282,6 @@ void Model::generateBoneNameToIndexMapping(aiMesh* mesh, std::map<std::string,in
 	}
 }
 
-//anton's tutorials
-glm::mat4 Model::aMat4toGLMMat4(aiMatrix4x4 &matrix)
-{
-	return glm::mat4(
-		1.0f,0.0f,0.0f,0.0f,
-		0.0f,1.0f,0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
-		matrix.a4,matrix.b4,matrix.c4,matrix.d4);
-}
-
 //inspired by http://pastebin.com/YaTamEct
 void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::map<std::string,int> &boneIndices, std::vector<Bone*> &bones)
 {
@@ -305,7 +295,7 @@ void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::ma
 
 		bone->name = name;
 		bone->index = boneEntry->second;
-		bone->offset = aMat4toGLMMat4(b->mOffsetMatrix);
+		bone->offset = Mesh::aMat4toGLMMat4(b->mOffsetMatrix);
 		bone->transform = glm::mat4(1.0);
 		bones.push_back(bone);
 	}
@@ -314,7 +304,7 @@ void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::ma
 		bone->name = name;
 		bone->index = -1;
 		bone->offset = glm::mat4(1.0);
-		bone->transform = aMat4toGLMMat4(node->mTransformation);
+		bone->transform = Mesh::aMat4toGLMMat4(node->mTransformation);
 		bones.push_back(bone);
 	}
 	for(int i = 0 ; i < node->mNumChildren ; i++)
@@ -403,7 +393,7 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	for(int i = 0 ; i < mesh->mNumBones ; i++)
 	{
 		boneTransforms.push_back(glm::mat4(1.0f));
-		boneOffsets.push_back(aMat4toGLMMat4(mesh->mBones[i]->mOffsetMatrix));
+		boneOffsets.push_back(Mesh::aMat4toGLMMat4(mesh->mBones[i]->mOffsetMatrix));
 	}
 
 	traverseAndGenerateBoneHierarchy(scene->mRootNode,mesh,boneNameToIndex,boneHierarchy);

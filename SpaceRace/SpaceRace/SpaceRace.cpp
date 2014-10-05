@@ -66,7 +66,7 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::
 
 	shader->bind();
 
-	camera->model = glm::rotate(camera->model,0.1f,glm::vec3(0.0f,1.0f,0.0f));
+	//camera->model = glm::rotate(camera->model,0.1f,glm::vec3(0.0f,1.0f,0.0f));
 
 	GLuint modelID = glGetUniformLocation(shader->mProgram,"model");
 	GLuint viewID = glGetUniformLocation(shader->mProgram,"view");
@@ -76,7 +76,7 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::
 	glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr(camera->model));
 	glUniformMatrix4fv(viewID,1,GL_FALSE,glm::value_ptr(camera->view));
 	glUniformMatrix4fv(perspectiveID,1,GL_FALSE,glm::value_ptr(camera->projection));
-	glUniform3fv(viewPosID,1,glm::value_ptr(camera->view));
+	glUniform3fv(viewPosID,1,glm::value_ptr(camera->position));
 
 	GLuint numLights = glGetUniformLocation(shader->mProgram,"numLights");
 	glUniform1i(numLights,lights->size());
