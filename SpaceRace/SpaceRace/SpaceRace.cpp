@@ -7,13 +7,13 @@
 struct Entity
 {
 	Model *model;
+	glm::mat4 modelMatrix;
 };
 
 struct Camera
 {
 	glm::mat4 view;
 	glm::mat4 projection;
-	glm::mat4 model;
 	glm::vec3 position;
 };
 
@@ -68,12 +68,11 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::
 
 	//camera->model = glm::rotate(camera->model,0.1f,glm::vec3(0.0f,1.0f,0.0f));
 
-	GLuint modelID = glGetUniformLocation(shader->mProgram,"model");
 	GLuint viewID = glGetUniformLocation(shader->mProgram,"view");
 	GLuint perspectiveID = glGetUniformLocation(shader->mProgram,"projection");
 	GLuint viewPosID = glGetUniformLocation(shader->mProgram,"viewPos");
 
-	glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr(camera->model));
+	
 	glUniformMatrix4fv(viewID,1,GL_FALSE,glm::value_ptr(camera->view));
 	glUniformMatrix4fv(perspectiveID,1,GL_FALSE,glm::value_ptr(camera->projection));
 	glUniform3fv(viewPosID,1,glm::value_ptr(camera->position));
@@ -91,6 +90,8 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::
 
 	for(int i = 0 ; i < entities->size() ; i++)
 	{
+		GLuint modelID = glGetUniformLocation(shader->mProgram,"model");
+		glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr((*entities)[i].modelMatrix));
 		(*entities)[i].model->draw(shader);
 	}
 
@@ -162,22 +163,26 @@ int _tmain(int argc, _TCHAR* argv[])
 	//load lights
 	std::vector<Light> lights;
 	Light light;
-	light.lightPos = glm::vec3(2.0f,1.0f,5.0f);
+	light.lightPos = glm::vec3(0.0f,5.0f,10.0f);
 	lights.push_back(light);
 
 	//load models
 	std::vector<Entity> entities;
 	
 	Entity entity;
-	Model objectModel =  Model("../../../Media/Models/hand.dae");
+	Model objectModel =  Model("../../../Media/Models/boblampclean.md5mesh");
 	entity.model = &objectModel;
+	entity.modelMatrix = glm::mat4(1.0f);
+	entity.modelMatrix = glm::rotate(entity.modelMatrix,-90.0f,glm::vec3(1.0f,0.0f,0.0f));
+	entity.modelMatrix = glm::scale(entity.modelMatrix,glm::vec3(0.1f));
 	entities.push_back(entity);
 
 	Camera camera;
-	camera.position = glm::vec3(0.0f,0.0f,5.0f);
+	camera.position = glm::vec3(0.0f,0.0f,1.0f);
 	camera.projection = glm::perspective(67.0f,(float)vmode->width/vmode->height,0.1f,100.0f);
 	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
-	camera.model = glm::mat4(1.0f);
+
+	camera.view = glm::translate(camera.view,glm::vec3(0.0,-3,-5.0));
 	//camera.model = glm::translate(camera.model,glm::vec3(0.0f,-5.0f,0.0f));
 	 
 #pragma endregion INIT

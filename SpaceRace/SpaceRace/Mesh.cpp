@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material,glm::mat4 &globalInverseTransform)
 {
 	mVertices = vertices;
 	mIndices = indices;
@@ -11,6 +11,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 	mAnimations = animations;
 	mMaterial = material;
 	mBoneOffsets = boneOffsets;
+	mGlobalInverseTransform = globalInverseTransform; 
 	setup();
 }
 
@@ -44,7 +45,12 @@ glm::vec3 Mesh::aVec3toGLMVec3(aiVector3D &vector)
 
 glm::quat Mesh::aQuattoGLMQuat(aiQuaternion &quat)
 {
-	return glm::quat(quat.w,quat.x,quat.y,quat.z);
+	glm::quat result;
+	result.x = quat.x;
+	result.y = quat.y;
+	result.z = quat.z;
+	result.w = quat.w;
+	return result;
 }
 
 glm::vec3 Mesh::lerp(float &time, glm::vec3 &start, glm::vec3 &end)
@@ -76,7 +82,9 @@ glm::mat4 Mesh::calculatePosition(BoneAnimation *anim)
 				glm::vec3 end = aVec3toGLMVec3(after.mValue);
 
 				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
-				result = glm::translate(result,lerp(time,start,end));
+				glm::vec3 posVector = lerp(time,start,end);
+				//printf("Position: %.2f, %.2f, %.2f\n",posVector.x,posVector.y,posVector.z);
+				result = glm::translate(result,posVector);
 				break;
 			}
 		}
@@ -108,7 +116,9 @@ glm::mat4 Mesh::calculateScale(BoneAnimation *anim)
 				glm::vec3 end = aVec3toGLMVec3(after.mValue);
 
 				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
-				result = glm::scale(result,lerp(time,start,end));
+				glm::vec3 scaleVector = lerp(time,start,end);
+				printf("Scale: %.2f, %.2f, %.2f\n",scaleVector.x,scaleVector.y,scaleVector.z);
+				result = glm::scale(result,scaleVector);
 				break;
 			}
 		}
@@ -143,6 +153,8 @@ glm::mat4 Mesh::calculateRotation(BoneAnimation *anim)
 				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
 
 				glm::quat rot = glm::slerp(start,end,time);
+				rot = glm::normalize(rot);
+				//printf("Rot: %.2f, %.2f, %.2f, %.2f\n",rot.w,rot.x,rot.y,rot.z); 
 
 				result = glm::mat4_cast(rot);
 				break;
@@ -156,6 +168,8 @@ void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimati
 {
 	Bone* b = bone;
 	int index = b->index;
+
+	glm::mat4 globalTransform = parentTransform*bone->transform;
 
 	if(index != -1)
 	{
@@ -180,14 +194,16 @@ void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimati
 
 		//calculate bone transform
 		glm::mat4 localTransform = translation*rotation*scale;
-		localTransform = glm::mat4(1.0f);
+		//localTransform = glm::mat4(1.0f);
 
 		//calculate global transform
-		glm::mat4 offset = mBoneOffsets[index];
-		glm::mat4 globalTransform = parentTransform*localTransform*offset;
+		globalTransform = parentTransform*localTransform;
+		globalTransform = glm::mat4(1.0f);
+
+		glm::mat4 finalTransform = mGlobalInverseTransform*globalTransform* mBoneOffsets[index];
 
 		//apply transform
-		b->transform = globalTransform;
+		b->transform = finalTransform;
 		mBoneTransforms[index] = b->transform;
 	}
 
@@ -195,7 +211,7 @@ void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimati
 	for (int i = 0 ; i < b->children.size() ; i++)
 	{
 		Bone *child = b->children[i];
-		traverseTreeApplyTransformations(child,animation,timeStep,b->transform);
+		traverseTreeApplyTransformations(child,animation,timeStep,globalTransform);
 	}
 }
 

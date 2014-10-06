@@ -401,7 +401,10 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	traverseAndGenerateBoneHierarchy(scene->mRootNode,mesh,boneNameToIndex,boneHierarchy);
 	processAnimations(scene,boneNameToIndex,animations);
 
-	return Mesh(vertices,indices,bones,boneOffsets,boneHierarchy,animations,boneTransforms,material);
+	glm::mat4 globalInverseTransform = Mesh::aMat4toGLMMat4(scene->mRootNode->mTransformation);
+	globalInverseTransform = glm::inverse(globalInverseTransform);
+
+	return Mesh(vertices,indices,bones,boneOffsets,boneHierarchy,animations,boneTransforms,material,globalInverseTransform);
 }
 
 GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)
