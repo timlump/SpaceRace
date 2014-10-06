@@ -44,6 +44,7 @@ struct VertexBone
 {
 	glm::ivec4 boneIDs;
 	glm::vec4 boneWeights;
+	int numWeights;
 };
 
 struct BoneInfo

@@ -180,58 +180,61 @@ void Mesh::loadBones()
 
 		if(mBoneMapping.find(boneName) == mBoneMapping.end())
 		{
-			boneIndex++;
 			BoneInfo info;
 			mBoneInfo.push_back(info);
 
 			mBoneInfo[boneIndex].boneOffset = bone->mOffsetMatrix;
 			mBoneMapping[boneName] = boneIndex;
+
+			boneIndex++;
 		}
 		else
 		{
 			boneIndex = mBoneMapping[boneName];
 		}
 
-		//to do
+		//map vertices to bones
+		for(int j = 0 ; j < bone->mNumWeights ; j++)
+		{
+			aiVertexWeight weight = bone->mWeights[j];
+			if(bones.find(weight.mVertexId) == bones.end())
+			{
+				VertexBone b;
+				b.boneWeights = glm::vec4(0.0f);
+				b.boneIDs = glm::ivec4(0.0f);
+
+				b.boneIDs[0] = boneIndex;
+				b.boneWeights[0] = weight.mWeight;
+				b.numWeights = 1;
+				bones[weight.mVertexId] = b;
+			}
+			else
+			{
+				int index = bones[weight.mVertexId].numWeights;
+				if(index < 4)
+				{
+					bones[weight.mVertexId].boneIDs[index] = boneIndex;
+					bones[weight.mVertexId].boneWeights[index] = weight.mWeight;
+					bones[weight.mVertexId].numWeights++;
+				}
+			}
+		}
+
+		//pump these out to bones vector
+		std::map<int,VertexBone>::iterator it;
+		for(it = bones.begin() ; it != bones.end() ; it++)
+		{
+			//dont forget to fill the bones vector to the size of the number of vertices
+
+		}
+
 	}
 }
 
-//void Model::generateVertexBoneMapping(aiMesh* mesh, std::map<GLuint,VertexBone> &boneMapping)
-//{
-//	//fill mapping so that every vertex is present
-//	for(int i = 0 ; i < mesh->mNumVertices ; i++)
-//	{
-//		VertexBone entry;
-//		entry.numWeights = 0;
-//		entry.boneWeights = glm::vec4(0.0f);
-//		entry.boneIDs = glm::ivec4(0);
-//		boneMapping[i] = entry;
-//	}
-//
-//	for(int i = 0 ; i < mesh->mNumBones ; i++)
-//	{
-//		aiBone *bone = mesh->mBones[i];
-//		std::string boneName(bone->mName.data);
-//
-//		for(int j = 0 ; j < bone->mNumWeights ; j++)
-//		{
-//			aiVertexWeight *weight = &bone->mWeights[j];
-//			GLuint vertexID = weight->mVertexId;
-//			//see if the vertex doesn't exist
-//			auto boneEntry = boneMapping.find(vertexID);
-//			if(boneEntry->second.numWeights+1 < BONES_PER_VERTEX)
-//			{
-//				int index = boneEntry->second.numWeights;
-//				boneEntry->second.numWeights++;
-//				boneEntry->second.boneIDs[index] = i;
-//				boneEntry->second.boneWeights[index] = weight->mWeight;
-//			}
-//		}
-//	}
-//}
-
 void Mesh::setup()
 {
+	loadBones();
+
 	glGenVertexArrays(1,&mVAO);
 
 	glBindVertexArray(mVAO);
