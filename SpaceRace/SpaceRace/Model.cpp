@@ -298,6 +298,8 @@ void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::ma
 		bone->offset = Mesh::aMat4toGLMMat4(b->mOffsetMatrix);
 		bone->transform = glm::mat4(1.0);
 		bones.push_back(bone);
+
+		printf("Bone: %d Name: %s\n",bone->index,bone->name.c_str());
 	}
 	else
 	{

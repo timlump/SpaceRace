@@ -180,6 +180,7 @@ void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimati
 
 		//calculate bone transform
 		glm::mat4 localTransform = translation*rotation*scale;
+		localTransform = glm::mat4(1.0f);
 
 		//calculate global transform
 		glm::mat4 offset = mBoneOffsets[index];
@@ -315,6 +316,11 @@ void Mesh::draw(Shader *shader)
 	glDrawElements(GL_TRIANGLES,mIndices.size(),GL_UNSIGNED_INT,0);
 	glBindVertexArray(0);
 }
+
+void drawBones(Shader *shader)
+{
+
+};
 
 void Mesh::setup()
 {

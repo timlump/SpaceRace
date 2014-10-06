@@ -73,6 +73,7 @@ class Mesh
 public:
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets ,std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material);
 	void draw(Shader *shader);
+	void drawBones(Shader *shader);
 	void setup();
 	void animate(std::string name,double time);
 	static glm::mat4 aMat4toGLMMat4(aiMatrix4x4 &matrix);
