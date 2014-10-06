@@ -44,34 +44,19 @@ struct VertexBone
 {
 	glm::ivec4 boneIDs;
 	glm::vec4 boneWeights;
-	int numWeights;
 };
 
-struct BoneAnimation
+struct BoneInfo
 {
-	std::string name;
-	int index;
-	double duration;
-	double ticksPerSecond;
-	double currentTick;
-	std::vector<aiVectorKey> positions;
-	std::vector<aiVectorKey> scalings;
-	std::vector<aiQuatKey> rotations;
-};
-
-struct Bone
-{
-	glm::mat4 transform;
-	glm::mat4 offset;
-	std::vector<Bone*> children;
-	std::string name;
-	int index;
+	aiMatrix4x4 boneOffset;
+	aiMatrix4x4 worldSpaceTransformation;
+	aiMatrix4x4 finalTransformation;
 };
 
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets ,std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material,glm::mat4 &globalInverseTransform);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material, const aiScene *scene, aiMesh *mesh);
 	void draw(Shader *shader);
 	void drawBones(Shader *shader);
 	void setup();
@@ -81,19 +66,19 @@ public:
 	static glm::quat aQuattoGLMQuat(aiQuaternion &quat);
 	static glm::vec3 lerp(float &time, glm::vec3 &start, glm::vec3 &end);
 private:
-	glm::mat4 calculatePosition(BoneAnimation *anim);
-	glm::mat4 calculateScale(BoneAnimation *anim);
-	glm::mat4 calculateRotation(BoneAnimation *anim);
-	void traverseTreeApplyTransformations(Bone* bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform);
+	void loadBones();
 
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
 	std::vector<VertexBone> mBones;
-	std::vector<glm::mat4> mBoneOffsets;
-	std::vector<Bone*> mBoneHierarchy;
-	std::map<std::string,std::map<int,BoneAnimation>> mAnimations;
-	std::vector<glm::mat4> mBoneTransforms;
+	std::map<std::string,int> mBoneMapping;
+	std::vector<BoneInfo> mBoneInfo;
+
 	Material mMaterial;
 	GLuint mVAO,mVBO,mEBO,mBBO;
-	glm::mat4 mGlobalInverseTransform;
+
+	aiMatrix4x4 mGlobalInverseTransform;
+
+	const aiScene *mScene;
+	aiMesh *mMesh;
 };

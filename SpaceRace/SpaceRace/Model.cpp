@@ -237,127 +237,6 @@ void Model::processMaterial(aiMesh* mesh, const aiScene* scene, Material &materi
 	}
 }
 
-void Model::generateVertexBoneMapping(aiMesh* mesh, std::map<GLuint,VertexBone> &boneMapping)
-{
-	//fill mapping so that every vertex is present
-	for(int i = 0 ; i < mesh->mNumVertices ; i++)
-	{
-		VertexBone entry;
-		entry.numWeights = 0;
-		entry.boneWeights = glm::vec4(0.0f);
-		entry.boneIDs = glm::ivec4(0);
-		boneMapping[i] = entry;
-	}
-
-	for(int i = 0 ; i < mesh->mNumBones ; i++)
-	{
-		aiBone *bone = mesh->mBones[i];
-		std::string boneName(bone->mName.data);
-
-		for(int j = 0 ; j < bone->mNumWeights ; j++)
-		{
-			aiVertexWeight *weight = &bone->mWeights[j];
-			GLuint vertexID = weight->mVertexId;
-			//see if the vertex doesn't exist
-			auto boneEntry = boneMapping.find(vertexID);
-			if(boneEntry->second.numWeights+1 < BONES_PER_VERTEX)
-			{
-				int index = boneEntry->second.numWeights;
-				boneEntry->second.numWeights++;
-				boneEntry->second.boneIDs[index] = i;
-				boneEntry->second.boneWeights[index] = weight->mWeight;
-			}
-		}
-	}
-}
-
-void Model::generateBoneNameToIndexMapping(aiMesh* mesh, std::map<std::string,int> &boneNameToIndex)
-{
-	for(int i = 0 ; i < mesh->mNumBones ; i++)
-	{
-		aiBone *bone = mesh->mBones[i];
-
-		std::string boneName(bone->mName.data);
-		boneNameToIndex[boneName] = i;
-	}
-}
-
-//inspired by http://pastebin.com/YaTamEct
-void Model::traverseAndGenerateBoneHierarchy(aiNode *node, aiMesh *mesh, std::map<std::string,int> &boneIndices, std::vector<Bone*> &bones)
-{
-	//check if current node is a bone
-	std::string name(node->mName.data);
-	auto boneEntry = boneIndices.find(name);
-	Bone *bone = new Bone();
-	if(boneEntry!=boneIndices.end())
-	{
-		aiBone *b = mesh->mBones[boneEntry->second];
-
-		bone->name = name;
-		bone->index = boneEntry->second;
-		bone->offset = Mesh::aMat4toGLMMat4(b->mOffsetMatrix);
-		bone->transform = glm::mat4(1.0);
-		bones.push_back(bone);
-
-		printf("Bone: %d Name: %s\n",bone->index,bone->name.c_str());
-	}
-	else
-	{
-		bone->name = name;
-		bone->index = -1;
-		bone->offset = glm::mat4(1.0);
-		bone->transform = Mesh::aMat4toGLMMat4(node->mTransformation);
-		bones.push_back(bone);
-	}
-	for(int i = 0 ; i < node->mNumChildren ; i++)
-	{
-		traverseAndGenerateBoneHierarchy(node->mChildren[i],mesh,boneIndices,bone->children);
-	}
-}
-
-void Model::processAnimations(const aiScene* scene, std::map<std::string,int> &boneIndices, std::map<std::string,std::map<int,BoneAnimation>> &animations)
-{
-	for(int i = 0 ; i < scene->mNumAnimations ; i++)
-	{
-		aiAnimation *anim = scene->mAnimations[i];
-		std::string animName(anim->mName.data);
-		std::map<int,BoneAnimation> animationMap;
-		for(int j = 0 ; j < anim->mNumChannels ; j++)
-		{
-			aiNodeAnim *node = anim->mChannels[j];
-			//check to see if it applies to a bone
-			std::string name(node->mNodeName.data);
-			auto boneEntry = boneIndices.find(name);
-			if(boneEntry != boneIndices.end())
-			{
-				BoneAnimation animation;
-				animation.name = name;
-				animation.index = boneEntry->second;
-				animation.duration = anim->mDuration;
-				animation.ticksPerSecond = anim->mTicksPerSecond;
-				animation.currentTick = 0.0;
-				for(int k = 0 ; k < node->mNumPositionKeys ; k++)
-				{
-					aiVectorKey key = node->mPositionKeys[k];
-					animation.positions.push_back(key);
-				}
-				for(int k = 0 ; k < node->mNumRotationKeys ; k++)
-				{
-					aiQuatKey key = node->mRotationKeys[k];
-					animation.rotations.push_back(key);
-				}
-				for(int k = 0 ; k < node->mNumScalingKeys ; k++)
-				{
-					aiVectorKey key = node->mScalingKeys[k];
-					animation.scalings.push_back(key);
-				}
-				animationMap[animation.index] = animation;
-			}
-		}
-		animations[animName] = animationMap;
-	}
-}
-
 void Model::animate(std::string name, double timeStep)
 {
 	for(int i = 0 ; i < mMeshes.size() ; i++)
@@ -370,41 +249,12 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
-	std::vector<VertexBone> bones;
-	std::vector<Bone*> boneHierarchy;
-	std::map<GLuint,VertexBone> boneMapping;
-	std::map<std::string,int> boneNameToIndex;
-	std::vector<glm::mat4> boneTransforms;
-	std::vector<glm::mat4> boneOffsets;
-
 	Material material;
-	std::map<std::string,std::map<int,BoneAnimation>> animations; 
 
 	processGeometry(mesh,vertices,indices);
 	processMaterial(mesh,scene,material);
-	generateVertexBoneMapping(mesh,boneMapping);
-	generateBoneNameToIndexMapping(mesh,boneNameToIndex);
 
-	//convert mapping to vector - taking advantage of the fact that a map is implicitly sorted
-	std::map<GLuint,VertexBone>::iterator it;
-	for(it = boneMapping.begin(); it != boneMapping.end() ; ++it)
-	{
-		bones.push_back(it->second);
-	}
-
-	for(int i = 0 ; i < mesh->mNumBones ; i++)
-	{
-		boneTransforms.push_back(glm::mat4(1.0f));
-		boneOffsets.push_back(Mesh::aMat4toGLMMat4(mesh->mBones[i]->mOffsetMatrix));
-	}
-
-	traverseAndGenerateBoneHierarchy(scene->mRootNode,mesh,boneNameToIndex,boneHierarchy);
-	processAnimations(scene,boneNameToIndex,animations);
-
-	glm::mat4 globalInverseTransform = Mesh::aMat4toGLMMat4(scene->mRootNode->mTransformation);
-	globalInverseTransform = glm::inverse(globalInverseTransform);
-
-	return Mesh(vertices,indices,bones,boneOffsets,boneHierarchy,animations,boneTransforms,material,globalInverseTransform);
+	return Mesh(vertices,indices,material,scene,mesh);
 }
 
 GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)

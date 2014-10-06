@@ -1,31 +1,20 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<VertexBone> bones, std::vector<glm::mat4> boneOffsets, std::vector<Bone*> boneHierarchy, std::map<std::string,std::map<int,BoneAnimation>> animations, std::vector<glm::mat4> boneTransforms, Material material,glm::mat4 &globalInverseTransform)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material, const aiScene *scene, aiMesh *mesh)
 {
 	mVertices = vertices;
 	mIndices = indices;
-	mBones = bones;
-	mBoneHierarchy = boneHierarchy;
-	mBoneTransforms = boneTransforms;
-	mAnimations = animations;
-	mMaterial = material;
-	mBoneOffsets = boneOffsets;
-	mGlobalInverseTransform = globalInverseTransform; 
+	mGlobalInverseTransform = scene->mRootNode->mTransformation;
+	mGlobalInverseTransform.Inverse();
+	mScene = scene;
+	mMesh = mesh;
 	setup();
 }
 
 void Mesh::animate(std::string name,double time)
 {
-	auto animEntry = mAnimations.find(name);
-	if(animEntry != mAnimations.end())
-	{
-		for(int i = 0 ; i < mBoneHierarchy.size() ; i++)
-		{
-			Bone *bone = mBoneHierarchy[i];
-			traverseTreeApplyTransformations(bone,animEntry->second,time,glm::mat4(1.0f));
-		}
-	}
+	
 }
 
 glm::mat4 Mesh::aMat4toGLMMat4(aiMatrix4x4 &matrix)
@@ -58,163 +47,6 @@ glm::vec3 Mesh::lerp(float &time, glm::vec3 &start, glm::vec3 &end)
 	return start*(1.0f-time) + end*time;
 }
 
-glm::mat4 Mesh::calculatePosition(BoneAnimation *anim)
-{
-	glm::mat4 result(1.0f);
-	//if only one key
-	if(anim->positions.size() == 1)
-	{
-		glm::vec3 translate = aVec3toGLMVec3(anim->positions[0].mValue);
-		result = glm::translate(result,translate);
-	}
-	//if many keys
-	else
-	{
-		//find current range
-		for(int i = 0 ; i < anim->positions.size()-1 ; i++)
-		{
-			aiVectorKey before = anim->positions[i];
-			aiVectorKey after = anim->positions[i+1];
-			//check if range is correct
-			if(anim->currentTick >= before.mTime && anim->currentTick < after.mTime)
-			{
-				glm::vec3 start = aVec3toGLMVec3(before.mValue);
-				glm::vec3 end = aVec3toGLMVec3(after.mValue);
-
-				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
-				glm::vec3 posVector = lerp(time,start,end);
-				//printf("Position: %.2f, %.2f, %.2f\n",posVector.x,posVector.y,posVector.z);
-				result = glm::translate(result,posVector);
-				break;
-			}
-		}
-	}
-	return result;
-}
-
-glm::mat4 Mesh::calculateScale(BoneAnimation *anim)
-{
-	glm::mat4 result(1.0f);
-	//if only one key
-	if(anim->scalings.size() == 1)
-	{
-		glm::vec3 scale = aVec3toGLMVec3(anim->scalings[0].mValue);
-		result = glm::scale(result,scale);
-	}
-	//if many keys
-	else
-	{
-		//find current range
-		for(int i = 0 ; i < anim->scalings.size()-1 ; i++)
-		{
-			aiVectorKey before = anim->scalings[i];
-			aiVectorKey after = anim->scalings[i+1];
-			//check if range is correct
-			if(anim->currentTick >= before.mTime && anim->currentTick < after.mTime)
-			{
-				glm::vec3 start = aVec3toGLMVec3(before.mValue);
-				glm::vec3 end = aVec3toGLMVec3(after.mValue);
-
-				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
-				glm::vec3 scaleVector = lerp(time,start,end);
-				printf("Scale: %.2f, %.2f, %.2f\n",scaleVector.x,scaleVector.y,scaleVector.z);
-				result = glm::scale(result,scaleVector);
-				break;
-			}
-		}
-	}
-	return result;
-}
-
-glm::mat4 Mesh::calculateRotation(BoneAnimation *anim)
-{
-	glm::mat4 result(1.0f);
-	//if only one key
-	if(anim->rotations.size() == 1)
-	{
-		glm::quat rot = aQuattoGLMQuat(anim->rotations[0].mValue);
-		result = glm::mat4_cast(rot);
-
-	}
-	//if many keys
-	else
-	{
-		//find current range
-		for(int i = 0 ; i < anim->rotations.size()-1 ; i++)
-		{
-			aiQuatKey before = anim->rotations[i];
-			aiQuatKey after = anim->rotations[i+1];
-			//check if range is correct
-			if(anim->currentTick >= before.mTime && anim->currentTick < after.mTime)
-			{
-				glm::quat start = aQuattoGLMQuat(before.mValue);
-				glm::quat end = aQuattoGLMQuat(after.mValue);
-
-				float time = (anim->currentTick-before.mTime)/(after.mTime-before.mTime);
-
-				glm::quat rot = glm::slerp(start,end,time);
-				rot = glm::normalize(rot);
-				//printf("Rot: %.2f, %.2f, %.2f, %.2f\n",rot.w,rot.x,rot.y,rot.z); 
-
-				result = glm::mat4_cast(rot);
-				break;
-			}
-		}
-	}
-	return result;
-}
-
-void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimation> &animation, double timeStep, glm::mat4 &parentTransform)
-{
-	Bone* b = bone;
-	int index = b->index;
-
-	glm::mat4 globalTransform = parentTransform*bone->transform;
-
-	if(index != -1)
-	{
-		//calculate current time
-		BoneAnimation *anim = &animation[index];
-		anim->currentTick += timeStep*anim->ticksPerSecond;
-		if(anim->currentTick>anim->duration)
-		{
-			anim->currentTick = 0.0;
-		}
-
-		//calculate local transform
-
-		//find current position
-		glm::mat4 translation = calculatePosition(anim);
-
-		//find current scale
-		glm::mat4 scale = calculateScale(anim);
-
-		//find current rotation
-		glm::mat4 rotation = calculateRotation(anim);
-
-		//calculate bone transform
-		glm::mat4 localTransform = translation*rotation*scale;
-		//localTransform = glm::mat4(1.0f);
-
-		//calculate global transform
-		globalTransform = parentTransform*localTransform;
-		globalTransform = glm::mat4(1.0f);
-
-		glm::mat4 finalTransform = mGlobalInverseTransform*globalTransform* mBoneOffsets[index];
-
-		//apply transform
-		b->transform = finalTransform;
-		mBoneTransforms[index] = b->transform;
-	}
-
-	//pass it on
-	for (int i = 0 ; i < b->children.size() ; i++)
-	{
-		Bone *child = b->children[i];
-		traverseTreeApplyTransformations(child,animation,timeStep,globalTransform);
-	}
-}
-
 void Mesh::draw(Shader *shader)
 {
 #pragma region uniforms
@@ -223,12 +55,15 @@ void Mesh::draw(Shader *shader)
 
 	if(mMaterial.hasBones)
 	{
-		for(int i = 0 ; i < mBoneTransforms.size() ; i++)
+		for(int i = 0 ; i < mBoneInfo.size() ; i++)
 		{
 			char buffer[80];
 			sprintf(buffer,"bones[%d]",i);
 			GLuint bones = glGetUniformLocation(shader->mProgram,buffer);
-			glUniformMatrix4fv(bones,1,GL_FALSE,glm::value_ptr(mBoneTransforms[i]));
+
+			glm::mat4 transform = aMat4toGLMMat4(mBoneInfo[i].finalTransformation);
+
+			glUniformMatrix4fv(bones,1,GL_FALSE,glm::value_ptr(transform));
 		}
 	}
 
@@ -333,10 +168,67 @@ void Mesh::draw(Shader *shader)
 	glBindVertexArray(0);
 }
 
-void drawBones(Shader *shader)
+void Mesh::loadBones()
 {
+	std::map<int,VertexBone> bones;
 
-};
+	for(int i = 0 ; i < mMesh->mNumBones ; i++)
+	{
+		int boneIndex = 0;
+		aiBone *bone = mMesh->mBones[i];
+		std::string boneName(bone->mName.data);
+
+		if(mBoneMapping.find(boneName) == mBoneMapping.end())
+		{
+			boneIndex++;
+			BoneInfo info;
+			mBoneInfo.push_back(info);
+
+			mBoneInfo[boneIndex].boneOffset = bone->mOffsetMatrix;
+			mBoneMapping[boneName] = boneIndex;
+		}
+		else
+		{
+			boneIndex = mBoneMapping[boneName];
+		}
+
+		//to do
+	}
+}
+
+//void Model::generateVertexBoneMapping(aiMesh* mesh, std::map<GLuint,VertexBone> &boneMapping)
+//{
+//	//fill mapping so that every vertex is present
+//	for(int i = 0 ; i < mesh->mNumVertices ; i++)
+//	{
+//		VertexBone entry;
+//		entry.numWeights = 0;
+//		entry.boneWeights = glm::vec4(0.0f);
+//		entry.boneIDs = glm::ivec4(0);
+//		boneMapping[i] = entry;
+//	}
+//
+//	for(int i = 0 ; i < mesh->mNumBones ; i++)
+//	{
+//		aiBone *bone = mesh->mBones[i];
+//		std::string boneName(bone->mName.data);
+//
+//		for(int j = 0 ; j < bone->mNumWeights ; j++)
+//		{
+//			aiVertexWeight *weight = &bone->mWeights[j];
+//			GLuint vertexID = weight->mVertexId;
+//			//see if the vertex doesn't exist
+//			auto boneEntry = boneMapping.find(vertexID);
+//			if(boneEntry->second.numWeights+1 < BONES_PER_VERTEX)
+//			{
+//				int index = boneEntry->second.numWeights;
+//				boneEntry->second.numWeights++;
+//				boneEntry->second.boneIDs[index] = i;
+//				boneEntry->second.boneWeights[index] = weight->mWeight;
+//			}
+//		}
+//	}
+//}
 
 void Mesh::setup()
 {
