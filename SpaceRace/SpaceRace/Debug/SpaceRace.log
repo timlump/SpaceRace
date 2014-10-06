@@ -1,16 +1,19 @@
-﻿Build started 05/10/2014 21:26:12.
+﻿Build started 06/10/2014 10:29:32.
      1>Project "C:\Users\Timothy\Projects\SpaceRace\SpaceRace\SpaceRace\SpaceRace.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         E:\VS\VC\bin\CL.exe /c /I"E:\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\include" /I"E:\Libraries\cegui\cegui-0.8.4\build\cegui\include" /I"E:\Libraries\cegui\cegui-0.8.4\cegui\include" /I"E:\Libraries\lua-5.1.5_Win32_dll12_lib\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /I"E:\Libraries\glfw-3.0.3.bin.WIN32\include" /I"E:\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /IE:\Libraries\glm /IE:\Libraries\AntTweakBar\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\SpaceRace.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt SpaceRace.cpp
-         SpaceRace.cpp
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(37): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+         E:\VS\VC\bin\CL.exe /c /I"E:\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\include" /I"E:\Libraries\cegui\cegui-0.8.4\build\cegui\include" /I"E:\Libraries\cegui\cegui-0.8.4\cegui\include" /I"E:\Libraries\lua-5.1.5_Win32_dll12_lib\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /I"E:\Libraries\glfw-3.0.3.bin.WIN32\include" /I"E:\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /IE:\Libraries\glm /IE:\Libraries\AntTweakBar\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\SpaceRace.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Mesh.cpp
+         Mesh.cpp
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(22): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(68): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(78): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(100): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(110): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(133): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(143): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(194): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(209): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\mesh.cpp(212): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\vs\vc\include\stdio.h(357) : see declaration of 'sprintf'
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(55): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(84): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(87): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 e:\vs\vc\include\stdio.h(357) : see declaration of 'sprintf'
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(92): warning C4018: '<' : signed/unsigned mismatch
-         GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
        Link:
          E:\VS\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Debug\SpaceRace.exe" /INCREMENTAL /NOLOGO /LIBPATH:"E:\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\lib\Win32-visualStudio" /LIBPATH:"E:\Libraries\cegui\cegui-0.8.4\build\lib" /LIBPATH:"E:\Libraries\lua-5.1.5_Win32_dll12_lib" /LIBPATH:"E:\Libraries\DevIL-SDK-x86-1.7.8\lib" /LIBPATH:E:\Libraries\AntTweakBar\lib /LIBPATH:"C:\Program Files\Assimp\lib\x86" /LIBPATH:"E:\Libraries\glew-1.11.0\lib\Release\Win32" /LIBPATH:"E:\Libraries\glfw-3.0.3.bin.WIN32\lib-msvc110" irrKlang.lib "CEGUIBase-0.lib" "CEGUIOpenGLRenderer-0.lib" lua5.1.lib DevIL.lib ILU.lib ILUT.lib AntTweakBar.lib assimp.lib glew32.lib glfw3dll.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Debug\SpaceRace.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Debug\SpaceRace.lib" /MACHINE:X86 Debug\Mesh.obj
          Debug\Model.obj
@@ -22,4 +25,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.55
+Time Elapsed 00:00:01.46

@@ -169,7 +169,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::vector<Entity> entities;
 	
 	Entity entity;
-	Model objectModel =  Model("../../../Media/Models/box.dae");
+	Model objectModel =  Model("../../../Media/Models/hand.dae");
 	entity.model = &objectModel;
 	entities.push_back(entity);
 
@@ -178,6 +178,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	camera.projection = glm::perspective(67.0f,(float)vmode->width/vmode->height,0.1f,100.0f);
 	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
 	camera.model = glm::mat4(1.0f);
+	//camera.model = glm::translate(camera.model,glm::vec3(0.0f,-5.0f,0.0f));
 	 
 #pragma endregion INIT
 

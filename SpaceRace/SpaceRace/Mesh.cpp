@@ -29,15 +29,12 @@ void Mesh::animate(std::string name,double time)
 
 glm::mat4 Mesh::aMat4toGLMMat4(aiMatrix4x4 &matrix)
 {
-	glm::mat4 result;
-	for(int i = 0 ; i < 4 ; i++)
-	{
-		for(int j = 0 ; j < 4 ; j++)
-		{
-			result[i][j] = matrix[j][i];
-		}
-	}
-	return result;
+	return glm::mat4
+		(
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		matrix.d1,matrix.d2,matrix.d3,matrix.d4);
 }
 
 glm::vec3 Mesh::aVec3toGLMVec3(aiVector3D &vector)
@@ -186,8 +183,7 @@ void Mesh::traverseTreeApplyTransformations(Bone *bone, std::map<int,BoneAnimati
 
 		//calculate global transform
 		glm::mat4 offset = mBoneOffsets[index];
-		glm::mat4 invOffset = glm::inverse(offset);
-		glm::mat4 globalTransform = parentTransform*invOffset*localTransform*offset;
+		glm::mat4 globalTransform = parentTransform*localTransform*offset;
 
 		//apply transform
 		b->transform = globalTransform;
