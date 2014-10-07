@@ -163,7 +163,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//load lights
 	std::vector<Light> lights;
 	Light light;
-	light.lightPos = glm::vec3(0.0f,0.0f,10.0f);
+	light.lightPos = glm::vec3(0.0f,5.0f,4.0f);
 	lights.push_back(light);
 
 	//load models
