@@ -49,9 +49,9 @@ struct VertexBone
 
 struct BoneInfo
 {
-	aiMatrix4x4 boneOffset;
-	aiMatrix4x4 worldSpaceTransformation;
-	aiMatrix4x4 finalTransformation;
+	glm::mat4 boneOffset;
+	glm::mat4 worldSpaceTransformation;
+	glm::mat4 finalTransformation;
 };
 
 class Mesh
@@ -63,12 +63,16 @@ public:
 	void setup();
 	void animate(std::string name,double time);
 	static glm::mat4 aMat4toGLMMat4(aiMatrix4x4 &matrix);
-	static glm::vec3 aVec3toGLMVec3(aiVector3D &vector);
-	static glm::quat aQuattoGLMQuat(aiQuaternion &quat);
-	static glm::vec3 lerp(float &time, glm::vec3 &start, glm::vec3 &end);
 private:
 	void loadBones();
-	void readNodes(float time,aiNode *node, aiAnimation *animation, aiMatrix4x4 &parentTransform);
+	void readNodes(float time,aiNode *node, aiAnimation *animation, glm::mat4 &parentTransform);
+	aiVector3D interpolatePosition(float time, aiNodeAnim* anim);
+	aiVector3D interpolateScale(float time, aiNodeAnim* anim);
+	aiQuaternion interpolateRotation(float time, aiNodeAnim* anim);
+	
+	int findPosition(float time, aiNodeAnim *anim);
+	int findScale(float time, aiNodeAnim *anim);
+	int findRotation(float time, aiNodeAnim *anim);
 
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
@@ -80,7 +84,7 @@ private:
 	Material mMaterial;
 	GLuint mVAO,mVBO,mEBO,mBBO;
 
-	aiMatrix4x4 mGlobalInverseTransform;
+	glm::mat4 mGlobalInverseTransform;
 	float mCurrentTime;
 
 	const aiScene *mScene;

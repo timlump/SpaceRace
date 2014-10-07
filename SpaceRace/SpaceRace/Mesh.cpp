@@ -5,11 +5,12 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material m
 {
 	mVertices = vertices;
 	mIndices = indices;
-	mGlobalInverseTransform = scene->mRootNode->mTransformation;
-	mGlobalInverseTransform.Inverse();
+	mGlobalInverseTransform = aMat4toGLMMat4(scene->mRootNode->mTransformation);
+	mGlobalInverseTransform = glm::inverse(mGlobalInverseTransform);
 	mScene = scene;
 	mMesh = mesh;
 	mCurrentTime = 0.0f;
+	mMaterial = material;
 	setup();
 }
 
@@ -20,20 +21,19 @@ void Mesh::animate(std::string name,double time)
 	{
 		aiAnimation *anim = mScene->mAnimations[animation->second];
 
-		aiMatrix4x4 identity;
 		mCurrentTime += time*anim->mTicksPerSecond;
 		if(mCurrentTime>anim->mDuration)
 		{
 			mCurrentTime = 0.0f;
 		}
-		readNodes(mCurrentTime,mScene->mRootNode,anim,identity);
+		readNodes(mCurrentTime,mScene->mRootNode,anim,glm::mat4(1.0f));
 	}
 }
 
-void Mesh::readNodes(float time,aiNode *node, aiAnimation *animation, aiMatrix4x4 &parentTransform)
+void Mesh::readNodes(float time,aiNode *node, aiAnimation *animation, glm::mat4 &parentTransform)
 {
 	std::string nodeName(node->mName.data);
-	aiMatrix4x4 nodeTransform = parentTransform;
+	glm::mat4 nodeTransform = aMat4toGLMMat4(node->mTransformation);
 
 	aiNodeAnim *nodeAnim = NULL;
 	for(int i = 0 ; i < animation->mNumChannels ; i++)
@@ -49,16 +49,27 @@ void Mesh::readNodes(float time,aiNode *node, aiAnimation *animation, aiMatrix4x
 
 	if(nodeAnim)
 	{
-		aiVector3D scaling;
+		aiVector3D scaling = interpolateScale(time,nodeAnim);
+		glm::mat4 scaleMatrix = glm::mat4(1.0f);
+		scaleMatrix = glm::scale(scaleMatrix,glm::vec3(scaling.x,scaling.y,scaling.z));
 
-		aiQuaternion rotation;
+		aiQuaternion rotation = interpolateRotation(time,nodeAnim);
+		glm::quat rotQuat;
+		rotQuat.w = rotation.w;
+		rotQuat.x = rotation.x;
+		rotQuat.y = rotation.y;
+		rotQuat.z = rotation.z;
+		glm::mat4 rotMatrix = glm::mat4_cast(rotQuat);
 
-		aiVector3D translation;
 
+		aiVector3D translation = interpolatePosition(time,nodeAnim);
+		glm::mat4 transMatrix = glm::mat4(1.0f);
+		transMatrix = glm::translate(transMatrix,glm::vec3(translation.x,translation.y,translation.z));
 
+		nodeTransform = transMatrix*rotMatrix*scaleMatrix;
 	}
 
-	aiMatrix4x4 globalTransformation = parentTransform*nodeTransform;
+	glm::mat4 globalTransformation = parentTransform*nodeTransform;
 
 	if(mBoneMapping.find(nodeName) != mBoneMapping.end())
 	{
@@ -75,32 +86,17 @@ void Mesh::readNodes(float time,aiNode *node, aiAnimation *animation, aiMatrix4x
 
 glm::mat4 Mesh::aMat4toGLMMat4(aiMatrix4x4 &matrix)
 {
-	return glm::mat4
-		(
-		1.0f,0.0f,0.0f,0.0f,
-		0.0f,1.0f,0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
-		matrix.d1,matrix.d2,matrix.d3,matrix.d4);
-}
-
-glm::vec3 Mesh::aVec3toGLMVec3(aiVector3D &vector)
-{
-	return glm::vec3(vector.x,vector.y,vector.z);
-}
-
-glm::quat Mesh::aQuattoGLMQuat(aiQuaternion &quat)
-{
-	glm::quat result;
-	result.x = quat.x;
-	result.y = quat.y;
-	result.z = quat.z;
-	result.w = quat.w;
+	glm::mat4 result;
+	aiMatrix4x4 matT = matrix;
+	matT = matT.Transpose();
+	for(int i = 0 ; i < 4 ; i++)
+	{
+		for(int j = 0 ; j < 4 ; j++)
+		{
+			result[i][j] = matT[i][j];
+		}
+	}
 	return result;
-}
-
-glm::vec3 Mesh::lerp(float &time, glm::vec3 &start, glm::vec3 &end)
-{
-	return start*(1.0f-time) + end*time;
 }
 
 void Mesh::draw(Shader *shader)
@@ -117,7 +113,7 @@ void Mesh::draw(Shader *shader)
 			sprintf(buffer,"bones[%d]",i);
 			GLuint bones = glGetUniformLocation(shader->mProgram,buffer);
 
-			glm::mat4 transform = aMat4toGLMMat4(mBoneInfo[i].finalTransformation);
+			glm::mat4 transform = mBoneInfo[i].finalTransformation;
 
 			glUniformMatrix4fv(bones,1,GL_FALSE,glm::value_ptr(transform));
 		}
@@ -226,8 +222,6 @@ void Mesh::draw(Shader *shader)
 
 void Mesh::loadBones()
 {
-	std::map<int,VertexBone> bones;
-
 	for(int i = 0 ; i < mMesh->mNumBones ; i++)
 	{
 		int boneIndex = 0;
@@ -236,13 +230,12 @@ void Mesh::loadBones()
 
 		if(mBoneMapping.find(boneName) == mBoneMapping.end())
 		{
+			boneIndex = mBoneInfo.size();
 			BoneInfo info;
 			mBoneInfo.push_back(info);
 
-			mBoneInfo[boneIndex].boneOffset = bone->mOffsetMatrix;
+			mBoneInfo[boneIndex].boneOffset = aMat4toGLMMat4(bone->mOffsetMatrix);
 			mBoneMapping[boneName] = boneIndex;
-
-			boneIndex++;
 		}
 		else
 		{
@@ -250,32 +243,6 @@ void Mesh::loadBones()
 		}
 
 		//map vertices to bones
-		for(int j = 0 ; j < bone->mNumWeights ; j++)
-		{
-			aiVertexWeight weight = bone->mWeights[j];
-			if(bones.find(weight.mVertexId) == bones.end())
-			{
-				VertexBone b;
-				b.boneWeights = glm::vec4(0.0f);
-				b.boneIDs = glm::ivec4(0.0f);
-
-				b.boneIDs[0] = boneIndex;
-				b.boneWeights[0] = weight.mWeight;
-				b.numWeights = 1;
-				bones[weight.mVertexId] = b;
-			}
-			else
-			{
-				int index = bones[weight.mVertexId].numWeights;
-				if(index < 4)
-				{
-					bones[weight.mVertexId].boneIDs[index] = boneIndex;
-					bones[weight.mVertexId].boneWeights[index] = weight.mWeight;
-					bones[weight.mVertexId].numWeights++;
-				}
-			}
-		}
-
 		//pump these out to bones vector
 		for(int j = 0 ; j < mMesh->mNumVertices ; j++)
 		{
@@ -286,11 +253,19 @@ void Mesh::loadBones()
 			mBones.push_back(b);
 		}
 
-		std::map<int,VertexBone>::iterator it;
-		for(it = bones.begin() ; it != bones.end() ; it++)
+		for(int j = 0 ; j < bone->mNumWeights ; j++)
 		{
-			int index = it->first;
-			mBones[index] = it->second;
+			aiVertexWeight weight = bone->mWeights[j];
+			
+			int index = weight.mVertexId;
+			int wI = mBones[index].numWeights;
+
+			if(wI < 4)
+			{
+				mBones[index].boneIDs[wI] = boneIndex;
+				mBones[index].boneWeights[wI] = weight.mWeight;
+				mBones[index].numWeights++;
+			}
 		}
 
 	}
@@ -343,4 +318,91 @@ void Mesh::setup()
 	glVertexAttribPointer(4,4,GL_FLOAT,GL_FALSE,sizeof(VertexBone),(GLvoid*)(sizeof(glm::ivec4)));
 
 	glBindVertexArray(0);
+}
+
+aiVector3D Mesh::interpolatePosition(float time, aiNodeAnim* anim)
+{
+	if(anim->mNumPositionKeys == 1)
+	{
+		return anim->mPositionKeys[0].mValue;
+	}
+
+	int index = findPosition(time,anim);
+	int nextIndex = index+1;
+
+	 float delta = (float)(anim->mPositionKeys[nextIndex].mTime - anim->mPositionKeys[index].mTime);
+	 float factor = (time - (float)anim->mPositionKeys[index].mTime) / delta;
+	 aiVector3D start = anim->mPositionKeys[index].mValue;
+	 aiVector3D end = anim->mPositionKeys[nextIndex].mValue;
+	 return start + factor*(end-start);
+}
+
+aiVector3D Mesh::interpolateScale(float time, aiNodeAnim* anim)
+{
+	if(anim->mNumScalingKeys == 1)
+	{
+		return anim->mScalingKeys[0].mValue;
+	}
+
+	int index = findScale(time,anim);
+	int nextIndex = index+1;
+
+	 float delta = (float)(anim->mScalingKeys[nextIndex].mTime - anim->mScalingKeys[index].mTime);
+	 float factor = (time - (float)anim->mScalingKeys[index].mTime) / delta;
+	 aiVector3D start = anim->mScalingKeys[index].mValue;
+	 aiVector3D end = anim->mScalingKeys[nextIndex].mValue;
+	 return start + factor*(end-start);
+}
+
+aiQuaternion Mesh::interpolateRotation(float time, aiNodeAnim* anim)
+{
+	if(anim->mNumRotationKeys == 1)
+	{
+		return anim->mRotationKeys[0].mValue;
+	}
+
+	int index = findRotation(time,anim);
+	int nextIndex = index+1;
+
+	 float delta = (float)(anim->mRotationKeys[nextIndex].mTime - anim->mRotationKeys[index].mTime);
+	 float factor = (time - (float)anim->mRotationKeys[index].mTime) / delta;
+	 aiQuaternion start = anim->mRotationKeys[index].mValue;
+	 aiQuaternion end = anim->mRotationKeys[nextIndex].mValue;
+	 aiQuaternion output;
+	 aiQuaternion::Interpolate(output,start,end,factor);
+	 return output.Normalize();
+}
+	
+int Mesh::findPosition(float time, aiNodeAnim *anim)
+{
+	for(int i = 0 ; anim->mNumPositionKeys-1 ; i++)
+	{
+		if(time < (float)anim->mPositionKeys[i+1].mTime)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+int Mesh::findScale(float time, aiNodeAnim *anim)
+{
+	for(int i = 0 ; anim->mNumScalingKeys-1 ; i++)
+	{
+		if(time < (float)anim->mScalingKeys[i+1].mTime)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+int Mesh::findRotation(float time, aiNodeAnim *anim)
+{
+	for(int i = 0 ; anim->mNumRotationKeys-1 ; i++)
+	{
+		if(time < (float)anim->mRotationKeys[i+1].mTime)
+		{
+			return i;
+		}
+	}
+	return 0;
 }
