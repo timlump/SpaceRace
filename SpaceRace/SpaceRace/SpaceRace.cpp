@@ -170,9 +170,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::vector<Entity> entities;
 	
 	Entity entity;
-	Model objectModel =  Model("../../../Media/Models/hand.dae");
+	Model objectModel =  Model("../../../Media/Models/boblampclean.md5mesh");
 	entity.model = &objectModel;
 	entity.modelMatrix = glm::mat4(1.0f);
+	entity.modelMatrix = glm::scale(entity.modelMatrix,glm::vec3(0.04f));
+	entity.modelMatrix = glm::rotate(entity.modelMatrix,-90.0f,glm::vec3(1.0,0.0,0.0));
 	entities.push_back(entity);
 
 	Camera camera;
@@ -181,7 +183,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
 
 	//camera.view = glm::translate(camera.view,glm::vec3(0.0,0,-10.0));
-	//camera.model = glm::translate(camera.model,glm::vec3(0.0f,-5.0f,0.0f));
 	 
 #pragma endregion INIT
 

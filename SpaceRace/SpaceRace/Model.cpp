@@ -6,7 +6,7 @@ std::map<std::string,GLuint> Model::mTextureIDs = std::map<std::string,GLuint>()
 
 Model::Model(std::string filename)
 {
-	mImporter.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality|aiProcess_FlipUVs);
+	mImporter.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality);
 	mScene = mImporter.GetOrphanedScene();//don't forget to clean up
 
 	if(mScene->HasMeshes())
