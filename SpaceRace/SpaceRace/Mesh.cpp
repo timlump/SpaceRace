@@ -9,12 +9,68 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material m
 	mGlobalInverseTransform.Inverse();
 	mScene = scene;
 	mMesh = mesh;
+	mCurrentTime = 0.0f;
 	setup();
 }
 
 void Mesh::animate(std::string name,double time)
 {
-	
+	auto animation = mAnimations.find(name);
+	if(animation != mAnimations.end())
+	{
+		aiAnimation *anim = mScene->mAnimations[animation->second];
+
+		aiMatrix4x4 identity;
+		mCurrentTime += time*anim->mTicksPerSecond;
+		if(mCurrentTime>anim->mDuration)
+		{
+			mCurrentTime = 0.0f;
+		}
+		readNodes(mCurrentTime,mScene->mRootNode,anim,identity);
+	}
+}
+
+void Mesh::readNodes(float time,aiNode *node, aiAnimation *animation, aiMatrix4x4 &parentTransform)
+{
+	std::string nodeName(node->mName.data);
+	aiMatrix4x4 nodeTransform = parentTransform;
+
+	aiNodeAnim *nodeAnim = NULL;
+	for(int i = 0 ; i < animation->mNumChannels ; i++)
+	{
+		aiNodeAnim *a = animation->mChannels[i];
+		std::string n(a->mNodeName.data);
+		if(n.compare(nodeName)==0)
+		{
+			nodeAnim = a;
+			break;
+		}
+	}
+
+	if(nodeAnim)
+	{
+		aiVector3D scaling;
+
+		aiQuaternion rotation;
+
+		aiVector3D translation;
+
+
+	}
+
+	aiMatrix4x4 globalTransformation = parentTransform*nodeTransform;
+
+	if(mBoneMapping.find(nodeName) != mBoneMapping.end())
+	{
+		int index = mBoneMapping[nodeName];
+		mBoneInfo[index].worldSpaceTransformation = mGlobalInverseTransform*globalTransformation;
+		mBoneInfo[index].finalTransformation = mGlobalInverseTransform*globalTransformation*mBoneInfo[index].boneOffset;
+	}
+
+	for(int i = 0 ; i < node->mNumChildren ; i++)
+	{
+		readNodes(time,node->mChildren[i],animation,globalTransformation);
+	}
 }
 
 glm::mat4 Mesh::aMat4toGLMMat4(aiMatrix4x4 &matrix)
@@ -221,11 +277,20 @@ void Mesh::loadBones()
 		}
 
 		//pump these out to bones vector
+		for(int j = 0 ; j < mMesh->mNumVertices ; j++)
+		{
+			VertexBone b;
+			b.boneWeights = glm::vec4(0.0f);
+			b.boneIDs = glm::ivec4(0.0f);
+			b.numWeights = 0;
+			mBones.push_back(b);
+		}
+
 		std::map<int,VertexBone>::iterator it;
 		for(it = bones.begin() ; it != bones.end() ; it++)
 		{
-			//dont forget to fill the bones vector to the size of the number of vertices
-
+			int index = it->first;
+			mBones[index] = it->second;
 		}
 
 	}
@@ -234,6 +299,13 @@ void Mesh::loadBones()
 void Mesh::setup()
 {
 	loadBones();
+
+	for(int i = 0 ; i < mScene->mNumAnimations ; i++)
+	{
+		aiAnimation *anim = mScene->mAnimations[i];
+		std::string animName(anim->mName.data);
+		mAnimations[animName] = i;
+	}
 
 	glGenVertexArrays(1,&mVAO);
 

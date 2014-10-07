@@ -68,17 +68,20 @@ public:
 	static glm::vec3 lerp(float &time, glm::vec3 &start, glm::vec3 &end);
 private:
 	void loadBones();
+	void readNodes(float time,aiNode *node, aiAnimation *animation, aiMatrix4x4 &parentTransform);
 
 	std::vector<Vertex> mVertices;
 	std::vector<GLuint> mIndices;
 	std::vector<VertexBone> mBones;
 	std::map<std::string,int> mBoneMapping;
+	std::map<std::string,int> mAnimations;
 	std::vector<BoneInfo> mBoneInfo;
 
 	Material mMaterial;
 	GLuint mVAO,mVBO,mEBO,mBBO;
 
 	aiMatrix4x4 mGlobalInverseTransform;
+	float mCurrentTime;
 
 	const aiScene *mScene;
 	aiMesh *mMesh;

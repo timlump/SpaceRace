@@ -6,20 +6,20 @@ std::map<std::string,GLuint> Model::mTextureIDs = std::map<std::string,GLuint>()
 
 Model::Model(std::string filename)
 {
-	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality|aiProcess_FlipUVs);
+	mImporter.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality|aiProcess_FlipUVs);
+	mScene = mImporter.GetOrphanedScene();//don't forget to clean up
 
-	if(scene->HasMeshes())
+	if(mScene->HasMeshes())
 	{
-		printf("Model has %d mesh(es)\n",scene->mNumMeshes);
+		printf("Model has %d mesh(es)\n",mScene->mNumMeshes);
 	}
 
-	if(scene->HasAnimations())
+	if(mScene->HasAnimations())
 	{
-		printf("Model has %d animation(s)\n",scene->mNumAnimations);
-		for(int i = 0 ; i < scene->mNumAnimations ; i++)
+		printf("Model has %d animation(s)\n",mScene->mNumAnimations);
+		for(int i = 0 ; i < mScene->mNumAnimations ; i++)
 		{
-			aiAnimation *anim = scene->mAnimations[i];
+			aiAnimation *anim = mScene->mAnimations[i];
 			std::string name(anim->mName.C_Str());
 			if(name.empty())
 			{
@@ -32,7 +32,7 @@ Model::Model(std::string filename)
 	}
 
 	mDirectory = filename.substr(0,filename.find_last_of('/'));
-	processNode(scene->mRootNode,scene);
+	processNode(mScene->mRootNode,mScene);
 }
 
 void Model::draw(Shader *shader)

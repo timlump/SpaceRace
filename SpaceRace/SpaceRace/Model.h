@@ -17,5 +17,8 @@ private:
 	void processMaterial(aiMesh* mesh, const aiScene* scene, Material &material);
 	GLuint loadMaterialTexture(aiMaterial* mat, aiTextureType type,GLboolean &success);
 
+	const aiScene *mScene;
+	Assimp::Importer mImporter;
+
 	static std::map<std::string,GLuint> mTextureIDs;
 };
