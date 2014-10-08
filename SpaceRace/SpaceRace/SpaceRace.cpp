@@ -164,7 +164,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	ilInit();
 
 	//physics
-	//to do
+	btBroadphaseInterface *broadphase = new btDbvtBroadphase();
 
 	//load lights
 	std::vector<Light> lights;
@@ -237,6 +237,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		glDeleteTextures(1,&it3->second);
 	}
+
+
+	delete broadphase;
 
 	soundEngine->drop();
 	guiRenderer.destroySystem();

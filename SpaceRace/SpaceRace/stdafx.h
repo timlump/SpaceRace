@@ -44,6 +44,8 @@
 #include <IL\ilu.h>
 #include <IL\ilut.h>
 
+#include <btBulletDynamicsCommon.h>
+
 #include <assert.h>
 
 
