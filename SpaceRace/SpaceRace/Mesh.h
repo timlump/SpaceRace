@@ -58,6 +58,7 @@ class Mesh
 {
 public:
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material, const aiScene *scene, aiMesh *mesh);
+	void wipeMesh();
 	void draw(Shader *shader);
 	void drawBones(Shader *shader);
 	void setup();

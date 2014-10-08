@@ -1,15 +1,16 @@
-﻿Build started 07/10/2014 23:09:33.
+﻿Build started 08/10/2014 01:47:24.
      1>Project "C:\Users\Timothy\Projects\SpaceRace\SpaceRace\SpaceRace\SpaceRace.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\VS\VC\bin\CL.exe /c /I"E:\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\include" /I"E:\Libraries\cegui\cegui-0.8.4\build\cegui\include" /I"E:\Libraries\cegui\cegui-0.8.4\cegui\include" /I"E:\Libraries\lua-5.1.5_Win32_dll12_lib\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /I"E:\Libraries\glfw-3.0.3.bin.WIN32\include" /I"E:\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /IE:\Libraries\glm /IE:\Libraries\AntTweakBar\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\SpaceRace.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt SpaceRace.cpp
          SpaceRace.cpp
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(37): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(43): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\vs\vc\include\stdio.h(357) : see declaration of 'sprintf'
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(55): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(83): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(86): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(61): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(89): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(92): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\vs\vc\include\stdio.h(357) : see declaration of 'sprintf'
-     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(91): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(97): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\timothy\projects\spacerace\spacerace\spacerace\spacerace.cpp(211): warning C4018: '<' : signed/unsigned mismatch
          GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
          GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
        Link:
@@ -23,4 +24,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.51
+Time Elapsed 00:00:01.78

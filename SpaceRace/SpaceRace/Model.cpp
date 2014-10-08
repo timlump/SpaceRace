@@ -6,8 +6,8 @@ std::map<std::string,GLuint> Model::mTextureIDs = std::map<std::string,GLuint>()
 
 Model::Model(std::string filename)
 {
-	mImporter.ReadFile(filename,aiProcessPreset_TargetRealtime_Quality);
-	mScene = mImporter.GetOrphanedScene();//don't forget to clean up
+	mImport = new Assimp::Importer();
+	mScene = mImport->ReadFile(filename,aiProcessPreset_TargetRealtime_Quality);
 
 	if(mScene->HasMeshes())
 	{
@@ -33,6 +33,15 @@ Model::Model(std::string filename)
 
 	mDirectory = filename.substr(0,filename.find_last_of('/'));
 	processNode(mScene->mRootNode,mScene);
+}
+
+void Model::wipeModel()
+{
+	for(int i = 0 ; i < mMeshes.size() ; i++)
+	{
+		mMeshes[i].wipeMesh();
+	}
+	delete mImport;
 }
 
 void Model::draw(Shader *shader)

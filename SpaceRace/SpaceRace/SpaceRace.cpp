@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "Model.h"
 
+
+
 struct Entity
 {
 	Model *model;
@@ -15,12 +17,16 @@ struct Camera
 	glm::mat4 view;
 	glm::mat4 projection;
 	glm::vec3 position;
+	float nearP,farP,fov;
 };
 
 struct Light
 {
 	glm::vec3 lightPos;
 };
+
+//GLOBALS
+Camera camera;
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
 void updateFrameRate(GLFWwindow *window)
@@ -50,15 +56,15 @@ double getTimeStep()
 	return diff;
 }
 
-void logic(std::vector<Entity> *entities, lua_State *luaState)
+void logic(std::vector<Entity*> *entities, lua_State *luaState)
 {
 	for(int i = 0 ; i < entities->size() ; i++)
 	{
-		(*entities)[i].model->animate("",getTimeStep());
+		(*entities)[i]->model->animate("",getTimeStep());
 	}
 }
 
-void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::vector<Light> *lights,Camera *camera)
+void draw(GLFWwindow *window,Shader *shader, std::vector<Entity*> *entities,std::vector<Light> *lights,Camera *camera)
 {
 	//glFlush();
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -91,8 +97,8 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity> *entities,std::
 	for(int i = 0 ; i < entities->size() ; i++)
 	{
 		GLuint modelID = glGetUniformLocation(shader->mProgram,"model");
-		glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr((*entities)[i].modelMatrix));
-		(*entities)[i].model->draw(shader);
+		glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr((*entities)[i]->modelMatrix));
+		(*entities)[i]->model->draw(shader);
 	}
 
 	shader->unbind();
@@ -129,7 +135,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode *vmode = glfwGetVideoMode(monitor);
 
-	GLFWwindow *window = glfwCreateWindow(vmode->width/2,vmode->height/2,"Space Race",NULL,NULL);
+	GLFWwindow *window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",NULL,NULL);
 	glfwMakeContextCurrent(window);
 
 	glewExperimental = GL_TRUE;
@@ -167,22 +173,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	lights.push_back(light);
 
 	//load models
-	std::vector<Entity> entities;
+	std::vector<Entity*> entities;
 	
-	Entity entity;
+	Entity *entity = new Entity();
 	Model objectModel =  Model("../../../Media/Models/boblampclean.md5mesh");
-	entity.model = &objectModel;
-	entity.modelMatrix = glm::mat4(1.0f);
-	entity.modelMatrix = glm::scale(entity.modelMatrix,glm::vec3(0.04f));
-	entity.modelMatrix = glm::rotate(entity.modelMatrix,-90.0f,glm::vec3(1.0,0.0,0.0));
+	entity->model = &objectModel;
+	entity->modelMatrix = glm::mat4(1.0f);
+	entity->modelMatrix = glm::scale(entity->modelMatrix,glm::vec3(0.04f));
+	entity->modelMatrix = glm::rotate(entity->modelMatrix,-90.0f,glm::vec3(1.0,0.0,0.0));
 	entities.push_back(entity);
 
-	Camera camera;
-	camera.position = glm::vec3(0.0f,0.0f,5.0f);
-	camera.projection = glm::perspective(67.0f,(float)vmode->width/vmode->height,0.1f,100.0f);
-	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
+	int width,height;
+	glfwGetWindowSize(window,&width,&height);
 
-	//camera.view = glm::translate(camera.view,glm::vec3(0.0,0,-10.0));
+	camera.nearP = 0.1f;
+	camera.farP = 100.0f;
+	camera.fov = 67.0f;
+	camera.position = glm::vec3(0.0f,0.0f,5.0f);
+	camera.projection = glm::perspective(camera.fov,(float)width/height,camera.nearP,camera.farP);
+	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
 	 
 #pragma endregion INIT
 
@@ -198,6 +207,37 @@ int _tmain(int argc, _TCHAR* argv[])
 #pragma endregion CORE
 
 #pragma region CLEAN_UP
+
+	for(int i = 0 ; i < entities.size() ; i++)
+	{
+		entities[i]->model->wipeModel();
+		delete entities[i];
+		entities.clear();
+	}
+
+	std::map<std::pair<GLuint,GLuint>,GLuint>::iterator it;
+	for(it = Shader::mPrograms.begin() ; it!=Shader::mPrograms.end() ; it++)
+	{
+		glDeleteProgram(it->second);
+	}
+
+	static std::map<std::string,GLuint>::iterator it2;
+	for(it2 = Shader::mVertShaders.begin() ; it2!= Shader::mVertShaders.end() ; it2++)
+	{
+		glDeleteShader(it2->second);
+	}
+
+	for(it2 = Shader::mFragShaders.begin() ; it2!= Shader::mFragShaders.end() ; it2++)
+	{
+		glDeleteShader(it2->second);
+	}
+
+	std::map<std::string,GLuint>::iterator it3;
+	for(it3 = Model::mTextureIDs.begin() ; it3!=Model::mTextureIDs.end() ; it3++)
+	{
+		glDeleteTextures(1,&it3->second);
+	}
+
 	soundEngine->drop();
 	guiRenderer.destroySystem();
 	lua_close(luaState);

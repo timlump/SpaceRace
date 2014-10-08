@@ -6,9 +6,11 @@ class Model
 {
 public:
 	Model(std::string filename);
+	void wipeModel();
 	void draw(Shader *shader);
 	std::vector<Mesh> mMeshes;
 	void animate(std::string name, double timeStep);
+	static std::map<std::string,GLuint> mTextureIDs;
 private:
 	std::string mDirectory;
 	void processNode(aiNode* node, const aiScene* scene);
@@ -18,7 +20,5 @@ private:
 	GLuint loadMaterialTexture(aiMaterial* mat, aiTextureType type,GLboolean &success);
 
 	const aiScene *mScene;
-	Assimp::Importer mImporter;
-
-	static std::map<std::string,GLuint> mTextureIDs;
+	Assimp::Importer *mImport;
 };

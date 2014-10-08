@@ -14,6 +14,14 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material m
 	setup();
 }
 
+void Mesh::wipeMesh()
+{
+	glDeleteBuffers(1,&mEBO);
+	glDeleteBuffers(1,&mBBO);
+	glDeleteBuffers(1,&mVBO);
+	glDeleteVertexArrays(1,&mVAO);
+}
+
 void Mesh::animate(std::string name,double time)
 {
 	auto animation = mAnimations.find(name);
