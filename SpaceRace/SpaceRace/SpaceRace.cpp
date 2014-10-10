@@ -10,6 +10,7 @@ struct Entity
 {
 	Model *model;
 	glm::mat4 modelMatrix;
+	btRigidBody *rigidBody;
 };
 
 struct Camera
@@ -56,12 +57,17 @@ double getTimeStep()
 	return diff;
 }
 
-void logic(std::vector<Entity*> *entities, lua_State *luaState)
+void logic(std::vector<Entity*> *entities, lua_State *luaState, btDiscreteDynamicsWorld *dynamicsWorld)
 {
+	float timeStep = getTimeStep();
+
+	dynamicsWorld->stepSimulation(timeStep);
+
 	for(int i = 0 ; i < entities->size() ; i++)
 	{
-		(*entities)[i]->model->animate("",getTimeStep());
+		(*entities)[i]->model->animate("",timeStep);
 	}
+
 }
 
 void draw(GLFWwindow *window,Shader *shader, std::vector<Entity*> *entities,std::vector<Light> *lights,Camera *camera)
@@ -165,6 +171,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//physics
 	btBroadphaseInterface *broadphase = new btDbvtBroadphase();
+	btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
+	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver;
+	btDiscreteDynamicsWorld *dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
 	//load lights
 	std::vector<Light> lights;
@@ -200,7 +210,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	while(!glfwWindowShouldClose(window))
 	{
 		updateFrameRate(window);
-		logic(&entities,luaState);
+		logic(&entities,luaState,dynamicsWorld);
 		draw(window,&gameShader,&entities,&lights,&camera);
 		io(window);
 	}
@@ -239,6 +249,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 
+	delete dynamicsWorld;
+	delete solver;
+	delete dispatcher;
+	delete collisionConfiguration;
 	delete broadphase;
 
 	soundEngine->drop();

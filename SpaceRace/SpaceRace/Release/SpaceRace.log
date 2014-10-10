@@ -1,47 +1,20 @@
-﻿Build started 08/10/2014 17:54:08.
+﻿Build started 10/10/2014 01:16:34.
      1>Project "C:\Users\Timothy\Projects\SpaceRace\SpaceRace\SpaceRace\SpaceRace.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Users\Timothy\Desktop\Libraries\bullet3-master\src" /I"C:\Users\Timothy\Desktop\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\include" /I"C:\Users\Timothy\Desktop\Libraries\cegui-0.8.4\build\cegui\include" /I"C:\Users\Timothy\Desktop\Libraries\cegui-0.8.4\cegui\include" /I"C:\Program Files (x86)\Lua\5.1\include" /I"C:\Users\Timothy\Desktop\Libraries\assimp-3.1.1-win-binaries\samples\DevIL\include" /I"C:\Users\Timothy\Desktop\Libraries\glfw-3.0.3.bin.WIN32\include" /I"C:\Users\Timothy\Desktop\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"C:\Users\Timothy\Desktop\Libraries\assimp-3.1.1-win-binaries\samples\DevIL\include" /IC:\Users\Timothy\Desktop\Libraries\glm /IC:\Users\Timothy\Desktop\Libraries\AntTweakBar\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Release\SpaceRace.pch" /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
-         stdafx.cpp
-     1>C:\Program Files (x86)\Windows Kits\8.0\Include\shared\minwindef.h(130): warning C4005: 'APIENTRY' : macro redefinition
-                 C:\Users\Timothy\Desktop\Libraries\glfw-3.0.3.bin.WIN32\include\GLFW\glfw3.h(92) : see previous definition of 'APIENTRY'
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Users\Timothy\Desktop\Libraries\bullet3-master\src" /I"C:\Users\Timothy\Desktop\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\include" /I"C:\Users\Timothy\Desktop\Libraries\cegui-0.8.4\build\cegui\include" /I"C:\Users\Timothy\Desktop\Libraries\cegui-0.8.4\cegui\include" /I"C:\Program Files (x86)\Lua\5.1\include" /I"C:\Users\Timothy\Desktop\Libraries\assimp-3.1.1-win-binaries\samples\DevIL\include" /I"C:\Users\Timothy\Desktop\Libraries\glfw-3.0.3.bin.WIN32\include" /I"C:\Users\Timothy\Desktop\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"C:\Users\Timothy\Desktop\Libraries\assimp-3.1.1-win-binaries\samples\DevIL\include" /IC:\Users\Timothy\Desktop\Libraries\glm /IC:\Users\Timothy\Desktop\Libraries\AntTweakBar\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\SpaceRace.pch" /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Mesh.cpp Model.cpp Shader.cpp SpaceRace.cpp
-         Mesh.cpp
-     1>Mesh.cpp(32): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
-     1>Mesh.cpp(47): warning C4018: '<' : signed/unsigned mismatch
-     1>Mesh.cpp(89): warning C4018: '<' : signed/unsigned mismatch
-     1>Mesh.cpp(118): warning C4018: '<' : signed/unsigned mismatch
-     1>Mesh.cpp(121): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : see declaration of 'sprintf'
-     1>Mesh.cpp(233): warning C4018: '<' : signed/unsigned mismatch
-     1>Mesh.cpp(255): warning C4018: '<' : signed/unsigned mismatch
-     1>Mesh.cpp(259): warning C4244: 'argument' : conversion from 'float' to 'const int', possible loss of data
-     1>Mesh.cpp(264): warning C4018: '<' : signed/unsigned mismatch
-     1>Mesh.cpp(286): warning C4018: '<' : signed/unsigned mismatch
-         Model.cpp
-     1>Model.cpp(20): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(40): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(49): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(57): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(70): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(79): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(112): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(115): warning C4018: '<' : signed/unsigned mismatch
-     1>Model.cpp(251): warning C4018: '<' : signed/unsigned mismatch
-         Shader.cpp
+         E:\VS\VC\bin\CL.exe /c /I"E:\Libraries\bullet3-master\src" /I"E:\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\include" /I"E:\Libraries\cegui\cegui-0.8.4\build\cegui\include" /I"E:\Libraries\cegui\cegui-0.8.4\cegui\include" /I"E:\Libraries\lua-5.1.5_Win32_dll12_lib\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /I"E:\Libraries\glfw-3.0.3.bin.WIN32\include" /I"E:\Libraries\glew-1.11.0\include" /I"C:\Program Files\Assimp\include" /I"E:\Libraries\DevIL-SDK-x86-1.7.8\include" /IE:\Libraries\glm /IE:\Libraries\AntTweakBar\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\SpaceRace.pch" /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt SpaceRace.cpp
          SpaceRace.cpp
      1>SpaceRace.cpp(43): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : see declaration of 'sprintf'
+                 E:\VS\VC\include\stdio.h(357) : see declaration of 'sprintf'
      1>SpaceRace.cpp(61): warning C4018: '<' : signed/unsigned mismatch
      1>SpaceRace.cpp(89): warning C4018: '<' : signed/unsigned mismatch
      1>SpaceRace.cpp(92): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : see declaration of 'sprintf'
+                 E:\VS\VC\include\stdio.h(357) : see declaration of 'sprintf'
      1>SpaceRace.cpp(97): warning C4018: '<' : signed/unsigned mismatch
-     1>SpaceRace.cpp(211): warning C4018: '<' : signed/unsigned mismatch
+     1>SpaceRace.cpp(215): warning C4018: '<' : signed/unsigned mismatch
          GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
          GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Release\SpaceRace.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Users\Timothy\Desktop\Libraries\bullet3-master\build\lib\Release" /LIBPATH:"C:\Users\Timothy\Desktop\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\lib\Win32-visualStudio" /LIBPATH:"C:\Users\Timothy\Desktop\Libraries\cegui-0.8.4\build\lib" /LIBPATH:"C:\Program Files (x86)\Lua\5.1" /LIBPATH:"C:\Users\Timothy\Desktop\Libraries\assimp-3.1.1-win-binaries\samples\DevIL\lib" /LIBPATH:C:\Users\Timothy\Desktop\Libraries\AntTweakBar\lib /LIBPATH:"C:\Program Files\Assimp\lib\x86" /LIBPATH:"C:\Users\Timothy\Desktop\Libraries\glew-1.11.0\lib\Release\Win32" /LIBPATH:"C:\Users\Timothy\Desktop\Libraries\glfw-3.0.3.bin.WIN32\lib-msvc110" BulletCollision.lib BulletDynamics.lib LinearMath.lib irrKlang.lib "CEGUIBase-0.lib" "CEGUIOpenGLRenderer-0.lib" lua5.1.lib DevIL.lib ILU.lib ILUT.lib AntTweakBar.lib assimp.lib glew32.lib glfw3dll.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Release\SpaceRace.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Release\SpaceRace.lib" /MACHINE:X86 /SAFESEH Release\Mesh.obj
+         E:\VS\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Release\SpaceRace.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"E:\Libraries\bullet3-master\build\lib\Release" /LIBPATH:"E:\Libraries\irrKlang-32bit-1.5.0\irrKlang-1.5.0\lib\Win32-visualStudio" /LIBPATH:"E:\Libraries\cegui\cegui-0.8.4\build\lib" /LIBPATH:"E:\Libraries\lua-5.1.5_Win32_dll12_lib" /LIBPATH:"E:\Libraries\DevIL-SDK-x86-1.7.8\lib" /LIBPATH:E:\Libraries\AntTweakBar\lib /LIBPATH:"C:\Program Files\Assimp\lib\x86" /LIBPATH:"E:\Libraries\glew-1.11.0\lib\Release\Win32" /LIBPATH:"E:\Libraries\glfw-3.0.3.bin.WIN32\lib-msvc110" BulletCollision.lib BulletDynamics.lib LinearMath.lib irrKlang.lib "CEGUIBase-0.lib" "CEGUIOpenGLRenderer-0.lib" lua5.1.lib DevIL.lib ILU.lib ILUT.lib AntTweakBar.lib assimp.lib glew32.lib glfw3dll.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Release\SpaceRace.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Timothy\Projects\SpaceRace\SpaceRace\Release\SpaceRace.lib" /MACHINE:X86 /SAFESEH Release\Mesh.obj
          Release\Model.obj
          Release\Shader.obj
          Release\SpaceRace.obj
@@ -53,4 +26,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.66
+Time Elapsed 00:00:02.22

@@ -1,205 +1,205 @@
-08/10/2014 17:55:58 (Std) 	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-08/10/2014 17:55:58 (Std) 	+                     Crazy Eddie's GUI System - Event log                    +
-08/10/2014 17:55:58 (Std) 	+                          (http://www.cegui.org.uk/)                         +
-08/10/2014 17:55:58 (Std) 	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+10/10/2014 01:20:48 (Std) 	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+10/10/2014 01:20:48 (Std) 	+                     Crazy Eddie's GUI System - Event log                    +
+10/10/2014 01:20:48 (Std) 	+                          (http://www.cegui.org.uk/)                         +
+10/10/2014 01:20:48 (Std) 	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-08/10/2014 17:55:58 (Std) 	CEGUI::Logger singleton created. (041F6470)
-08/10/2014 17:55:58 (Std) 	
-08/10/2014 17:55:58 (Std) 	********************************************************************************
-08/10/2014 17:55:58 (Std) 	* Important:                                                                   *
-08/10/2014 17:55:58 (Std) 	*     To get support at the CEGUI forums, you must post _at least_ the section *
-08/10/2014 17:55:58 (Std) 	*     of this log file indicated below.  Failure to do this will result in no  *
-08/10/2014 17:55:58 (Std) 	*     support being given; please do not waste our time.                       *
-08/10/2014 17:55:58 (Std) 	********************************************************************************
-08/10/2014 17:55:58 (Std) 	********************************************************************************
-08/10/2014 17:55:58 (Std) 	* -------- START OF ESSENTIAL SECTION TO BE POSTED ON THE FORUM       -------- *
-08/10/2014 17:55:58 (Std) 	********************************************************************************
-08/10/2014 17:55:58 (Std) 	---- Version: 0.8.4 (Build: Oct  2 2014 Microsoft Windows MSVC++ 11.0 32 bit) ----
-08/10/2014 17:55:58 (Std) 	---- Renderer module is: CEGUI::OpenGL3Renderer - Official OpenGL 3.2 core based renderer module.  TextureTarget support enabled via FBO OGL 3.2 core implementation. ----
-08/10/2014 17:55:58 (Std) 	---- XML Parser module is: CEGUI::ExpatParser - Official expat based parser module for CEGUI ----
-08/10/2014 17:55:58 (Std) 	---- Image Codec module is: SILLYImageCodec - Official SILLY based image codec ----
-08/10/2014 17:55:58 (Std) 	---- Scripting module is: None ----
-08/10/2014 17:55:58 (Std) 	********************************************************************************
-08/10/2014 17:55:58 (Std) 	* -------- END OF ESSENTIAL SECTION TO BE POSTED ON THE FORUM         -------- *
-08/10/2014 17:55:58 (Std) 	********************************************************************************
-08/10/2014 17:55:58 (Std) 	
-08/10/2014 17:55:58 (Std) 	---- Begining CEGUI System initialisation ----
-08/10/2014 17:55:58 (Std) 	[CEGUI::ImageManager] Singleton created (041EBF88)
-08/10/2014 17:55:58 (Std) 	[CEGUI::ImageManager] Registered Image type: BasicImage
-08/10/2014 17:55:58 (Std) 	CEGUI::FontManager singleton created. (041ECDE8)
-08/10/2014 17:55:58 (Std) 	CEGUI::WindowFactoryManager singleton created
-08/10/2014 17:55:58 (Std) 	CEGUI::WindowManager singleton created (041F8BD0)
-08/10/2014 17:55:58 (Std) 	CEGUI::SchemeManager singleton created. (041ED780)
-08/10/2014 17:55:58 (Std) 	CEGUI::GlobalEventSet singleton created. (041F6620)
-08/10/2014 17:55:58 (Std) 	CEGUI::AnimationManager singleton created (041ED730)
-08/10/2014 17:55:58 (Std) 	CEGUI::WidgetLookManager singleton created. (041F8C20)
-08/10/2014 17:55:58 (Std) 	CEGUI::WindowRendererManager singleton created (041EAAF0)
-08/10/2014 17:55:58 (Std) 	CEGUI::RenderEffectManager singleton created (041ED690)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'DefaultWindow' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'DefaultWindow' windows added. (041F0E60)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'DragContainer' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'DragContainer' windows added. (041F1000)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'ScrolledContainer' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'ScrolledContainer' windows added. (041F11A0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'ClippedContainer' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'ClippedContainer' windows added. (041F1348)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/PushButton' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/PushButton' windows added. (041F14F0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/RadioButton' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/RadioButton' windows added. (041F16A0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Combobox' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Combobox' windows added. (041F1820)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ComboDropList' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ComboDropList' windows added. (041F19E0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Editbox' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Editbox' windows added. (041F1B60)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/FrameWindow' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/FrameWindow' windows added. (041F1CE0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ItemEntry' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ItemEntry' windows added. (041F1EB0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Listbox' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Listbox' windows added. (041F2328)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ListHeader' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ListHeader' windows added. (041D4B90)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ListHeaderSegment' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ListHeaderSegment' windows added. (041F20F8)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Menubar' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Menubar' windows added. (041D4D10)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/PopupMenu' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/PopupMenu' windows added. (041D4E40)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/MenuItem' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/MenuItem' windows added. (041D5090)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/MultiColumnList' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/MultiColumnList' windows added. (041D5210)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/MultiLineEditbox' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/MultiLineEditbox' windows added. (041D5390)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ProgressBar' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ProgressBar' windows added. (041D5510)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ScrollablePane' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ScrollablePane' windows added. (041D57B8)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Scrollbar' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Scrollbar' windows added. (041D5938)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Slider' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Slider' windows added. (041D5AB8)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Spinner' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Spinner' windows added. (041D5C38)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/TabButton' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/TabButton' windows added. (041D5DB8)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/TabControl' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/TabControl' windows added. (041D5F38)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Thumb' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Thumb' windows added. (041D60B8)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Titlebar' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Titlebar' windows added. (041D6238)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ToggleButton' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ToggleButton' windows added. (041D63B8)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Tooltip' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Tooltip' windows added. (041D65F8)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/ItemListbox' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/ItemListbox' windows added. (041D66B0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/GroupBox' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/GroupBox' windows added. (041D6830)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'CEGUI/Tree' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'CEGUI/Tree' windows added. (041D69B0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'LayoutCell' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'LayoutCell' windows added. (041D6B30)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'HorizontalLayoutContainer' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'HorizontalLayoutContainer' windows added. (041D6CB0)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'VerticalLayoutContainer' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'VerticalLayoutContainer' windows added. (041D6E30)
-08/10/2014 17:55:58 (Std) 	Created WindowFactory for 'GridLayoutContainer' windows.
-08/10/2014 17:55:58 (Std) 	WindowFactory for 'GridLayoutContainer' windows added. (041D6FB0)
-08/10/2014 17:55:58 (Std) 	CEGUI::System singleton created. (041F6110)
-08/10/2014 17:55:58 (Std) 	---- CEGUI System initialisation completed ----
-08/10/2014 17:55:58 (Std) 	
-08/10/2014 17:55:59 (Std) 	---- Begining CEGUI System destruction ----
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Tree' windows removed. (041D69B0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Tree' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'LayoutCell' windows removed. (041D6B30)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'LayoutCell' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Thumb' windows removed. (041D60B8)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Thumb' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Slider' windows removed. (041D5AB8)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Slider' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Editbox' windows removed. (041F1B60)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Editbox' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Listbox' windows removed. (041F2328)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Listbox' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Menubar' windows removed. (041D4D10)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Menubar' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Spinner' windows removed. (041D5C38)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Spinner' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Tooltip' windows removed. (041D65F8)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Tooltip' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'DefaultWindow' windows removed. (041F0E60)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'DefaultWindow' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'DragContainer' windows removed. (041F1000)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'DragContainer' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Combobox' windows removed. (041F1820)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Combobox' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/GroupBox' windows removed. (041D6830)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/GroupBox' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/MenuItem' windows removed. (041D5090)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/MenuItem' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Titlebar' windows removed. (041D6238)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Titlebar' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ItemEntry' windows removed. (041F1EB0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ItemEntry' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/PopupMenu' windows removed. (041D4E40)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/PopupMenu' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/Scrollbar' windows removed. (041D5938)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/Scrollbar' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/TabButton' windows removed. (041D5DB8)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/TabButton' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ListHeader' windows removed. (041D4B90)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ListHeader' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/PushButton' windows removed. (041F14F0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/PushButton' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/TabControl' windows removed. (041D5F38)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/TabControl' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'ClippedContainer' windows removed. (041F1348)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'ClippedContainer' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/FrameWindow' windows removed. (041F1CE0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/FrameWindow' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ItemListbox' windows removed. (041D66B0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ItemListbox' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ProgressBar' windows removed. (041D5510)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ProgressBar' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/RadioButton' windows removed. (041F16A0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/RadioButton' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'ScrolledContainer' windows removed. (041F11A0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'ScrolledContainer' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ToggleButton' windows removed. (041D63B8)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ToggleButton' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ComboDropList' windows removed. (041F19E0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ComboDropList' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'GridLayoutContainer' windows removed. (041D6FB0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'GridLayoutContainer' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ScrollablePane' windows removed. (041D57B8)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ScrollablePane' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/MultiColumnList' windows removed. (041D5210)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/MultiColumnList' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/MultiLineEditbox' windows removed. (041D5390)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/MultiLineEditbox' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'CEGUI/ListHeaderSegment' windows removed. (041F20F8)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'CEGUI/ListHeaderSegment' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'VerticalLayoutContainer' windows removed. (041D6E30)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'VerticalLayoutContainer' windows.
-08/10/2014 17:55:59 (Std) 	WindowFactory for 'HorizontalLayoutContainer' windows removed. (041D6CB0)
-08/10/2014 17:55:59 (Std) 	Deleted WindowFactory for 'HorizontalLayoutContainer' windows.
-08/10/2014 17:55:59 (Std) 	---- Begining cleanup of GUI Scheme system ----
-08/10/2014 17:55:59 (Std) 	CEGUI::SchemeManager singleton destroyed. (041ED780)
-08/10/2014 17:55:59 (Std) 	CEGUI::WindowManager singleton destroyed (041F8BD0)
-08/10/2014 17:55:59 (Std) 	CEGUI::WindowFactoryManager singleton destroyed
-08/10/2014 17:55:59 (Std) 	CEGUI::WidgetLookManager singleton destroyed. (041F8C20)
-08/10/2014 17:55:59 (Std) 	CEGUI::WindowRendererManager singleton destroyed (041EAAF0)
-08/10/2014 17:55:59 (Std) 	CEGUI::AnimationManager singleton destroyed (041ED730)
-08/10/2014 17:55:59 (Std) 	CEGUI::RenderEffectManager singleton destroyed (041ED690)
-08/10/2014 17:55:59 (Std) 	---- Begining cleanup of Font system ----
-08/10/2014 17:55:59 (Std) 	CEGUI::FontManager singleton destroyed. (041ECDE8)
-08/10/2014 17:55:59 (Std) 	[CEGUI::ImageManager] Unregistered Image type: BasicImage
-08/10/2014 17:55:59 (Std) 	[CEGUI::ImageManager] Singleton destroyed (041EBF88)
-08/10/2014 17:55:59 (Std) 	CEGUI::GlobalEventSet singleton destroyed. (041F6620)
-08/10/2014 17:55:59 (Std) 	CEGUI::System singleton destroyed. (041F6110)
-08/10/2014 17:55:59 (Std) 	---- CEGUI System destruction completed ----
-08/10/2014 17:55:59 (Std) 	CEGUI::Logger singleton destroyed. (041F6470)
+10/10/2014 01:20:48 (Std) 	CEGUI::Logger singleton created. (053725C0)
+10/10/2014 01:20:48 (Std) 	
+10/10/2014 01:20:48 (Std) 	********************************************************************************
+10/10/2014 01:20:48 (Std) 	* Important:                                                                   *
+10/10/2014 01:20:48 (Std) 	*     To get support at the CEGUI forums, you must post _at least_ the section *
+10/10/2014 01:20:48 (Std) 	*     of this log file indicated below.  Failure to do this will result in no  *
+10/10/2014 01:20:48 (Std) 	*     support being given; please do not waste our time.                       *
+10/10/2014 01:20:48 (Std) 	********************************************************************************
+10/10/2014 01:20:48 (Std) 	********************************************************************************
+10/10/2014 01:20:48 (Std) 	* -------- START OF ESSENTIAL SECTION TO BE POSTED ON THE FORUM       -------- *
+10/10/2014 01:20:48 (Std) 	********************************************************************************
+10/10/2014 01:20:48 (Std) 	---- Version: 0.8.4 (Build: Sep 25 2014 Microsoft Windows MSVC++ 11.0 32 bit) ----
+10/10/2014 01:20:48 (Std) 	---- Renderer module is: CEGUI::OpenGL3Renderer - Official OpenGL 3.2 core based renderer module.  TextureTarget support enabled via FBO OGL 3.2 core implementation. ----
+10/10/2014 01:20:48 (Std) 	---- XML Parser module is: CEGUI::ExpatParser - Official expat based parser module for CEGUI ----
+10/10/2014 01:20:48 (Std) 	---- Image Codec module is: SILLYImageCodec - Official SILLY based image codec ----
+10/10/2014 01:20:48 (Std) 	---- Scripting module is: None ----
+10/10/2014 01:20:48 (Std) 	********************************************************************************
+10/10/2014 01:20:48 (Std) 	* -------- END OF ESSENTIAL SECTION TO BE POSTED ON THE FORUM         -------- *
+10/10/2014 01:20:48 (Std) 	********************************************************************************
+10/10/2014 01:20:48 (Std) 	
+10/10/2014 01:20:48 (Std) 	---- Begining CEGUI System initialisation ----
+10/10/2014 01:20:48 (Std) 	[CEGUI::ImageManager] Singleton created (05369900)
+10/10/2014 01:20:48 (Std) 	[CEGUI::ImageManager] Registered Image type: BasicImage
+10/10/2014 01:20:48 (Std) 	CEGUI::FontManager singleton created. (05369CE8)
+10/10/2014 01:20:48 (Std) 	CEGUI::WindowFactoryManager singleton created
+10/10/2014 01:20:48 (Std) 	CEGUI::WindowManager singleton created (05369A98)
+10/10/2014 01:20:48 (Std) 	CEGUI::SchemeManager singleton created. (0536A5D8)
+10/10/2014 01:20:48 (Std) 	CEGUI::GlobalEventSet singleton created. (05369350)
+10/10/2014 01:20:48 (Std) 	CEGUI::AnimationManager singleton created (05369938)
+10/10/2014 01:20:48 (Std) 	CEGUI::WidgetLookManager singleton created. (05372A58)
+10/10/2014 01:20:48 (Std) 	CEGUI::WindowRendererManager singleton created (0536A560)
+10/10/2014 01:20:48 (Std) 	CEGUI::RenderEffectManager singleton created (0536A588)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'DefaultWindow' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'DefaultWindow' windows added. (0534E868)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'DragContainer' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'DragContainer' windows added. (0534EA08)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'ScrolledContainer' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'ScrolledContainer' windows added. (0534EBA8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'ClippedContainer' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'ClippedContainer' windows added. (0534ED50)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/PushButton' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/PushButton' windows added. (0534EEF8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/RadioButton' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/RadioButton' windows added. (0534F0A8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Combobox' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Combobox' windows added. (0534F228)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ComboDropList' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ComboDropList' windows added. (0534F3E8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Editbox' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Editbox' windows added. (0534F568)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/FrameWindow' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/FrameWindow' windows added. (0534F6E8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ItemEntry' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ItemEntry' windows added. (0534F8B8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Listbox' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Listbox' windows added. (0534FA38)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ListHeader' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ListHeader' windows added. (0534FBB8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ListHeaderSegment' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ListHeaderSegment' windows added. (0534FDB0)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Menubar' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Menubar' windows added. (0534FF30)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/PopupMenu' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/PopupMenu' windows added. (053500B0)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/MenuItem' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/MenuItem' windows added. (05350230)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/MultiColumnList' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/MultiColumnList' windows added. (053503B0)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/MultiLineEditbox' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/MultiLineEditbox' windows added. (053505A8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ProgressBar' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ProgressBar' windows added. (053507A0)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ScrollablePane' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ScrollablePane' windows added. (053509A8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Scrollbar' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Scrollbar' windows added. (05350B28)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Slider' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Slider' windows added. (05350CA8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Spinner' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Spinner' windows added. (05350E28)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/TabButton' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/TabButton' windows added. (05350FA8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/TabControl' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/TabControl' windows added. (05351128)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Thumb' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Thumb' windows added. (053512A8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Titlebar' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Titlebar' windows added. (05351428)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ToggleButton' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ToggleButton' windows added. (053515A8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Tooltip' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Tooltip' windows added. (053517E8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/ItemListbox' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/ItemListbox' windows added. (05351968)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/GroupBox' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/GroupBox' windows added. (05351AE8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'CEGUI/Tree' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'CEGUI/Tree' windows added. (05351C68)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'LayoutCell' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'LayoutCell' windows added. (05351DE8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'HorizontalLayoutContainer' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'HorizontalLayoutContainer' windows added. (05351F68)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'VerticalLayoutContainer' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'VerticalLayoutContainer' windows added. (053520E8)
+10/10/2014 01:20:48 (Std) 	Created WindowFactory for 'GridLayoutContainer' windows.
+10/10/2014 01:20:48 (Std) 	WindowFactory for 'GridLayoutContainer' windows added. (05352268)
+10/10/2014 01:20:48 (Std) 	CEGUI::System singleton created. (053658E0)
+10/10/2014 01:20:48 (Std) 	---- CEGUI System initialisation completed ----
+10/10/2014 01:20:48 (Std) 	
+10/10/2014 01:21:04 (Std) 	---- Begining CEGUI System destruction ----
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Tree' windows removed. (05351C68)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Tree' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'LayoutCell' windows removed. (05351DE8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'LayoutCell' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Thumb' windows removed. (053512A8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Thumb' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Slider' windows removed. (05350CA8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Slider' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Editbox' windows removed. (0534F568)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Editbox' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Listbox' windows removed. (0534FA38)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Listbox' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Menubar' windows removed. (0534FF30)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Menubar' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Spinner' windows removed. (05350E28)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Spinner' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Tooltip' windows removed. (053517E8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Tooltip' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'DefaultWindow' windows removed. (0534E868)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'DefaultWindow' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'DragContainer' windows removed. (0534EA08)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'DragContainer' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Combobox' windows removed. (0534F228)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Combobox' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/GroupBox' windows removed. (05351AE8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/GroupBox' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/MenuItem' windows removed. (05350230)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/MenuItem' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Titlebar' windows removed. (05351428)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Titlebar' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ItemEntry' windows removed. (0534F8B8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ItemEntry' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/PopupMenu' windows removed. (053500B0)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/PopupMenu' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/Scrollbar' windows removed. (05350B28)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/Scrollbar' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/TabButton' windows removed. (05350FA8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/TabButton' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ListHeader' windows removed. (0534FBB8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ListHeader' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/PushButton' windows removed. (0534EEF8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/PushButton' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/TabControl' windows removed. (05351128)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/TabControl' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'ClippedContainer' windows removed. (0534ED50)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'ClippedContainer' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/FrameWindow' windows removed. (0534F6E8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/FrameWindow' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ItemListbox' windows removed. (05351968)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ItemListbox' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ProgressBar' windows removed. (053507A0)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ProgressBar' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/RadioButton' windows removed. (0534F0A8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/RadioButton' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'ScrolledContainer' windows removed. (0534EBA8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'ScrolledContainer' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ToggleButton' windows removed. (053515A8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ToggleButton' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ComboDropList' windows removed. (0534F3E8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ComboDropList' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'GridLayoutContainer' windows removed. (05352268)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'GridLayoutContainer' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ScrollablePane' windows removed. (053509A8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ScrollablePane' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/MultiColumnList' windows removed. (053503B0)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/MultiColumnList' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/MultiLineEditbox' windows removed. (053505A8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/MultiLineEditbox' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'CEGUI/ListHeaderSegment' windows removed. (0534FDB0)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'CEGUI/ListHeaderSegment' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'VerticalLayoutContainer' windows removed. (053520E8)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'VerticalLayoutContainer' windows.
+10/10/2014 01:21:04 (Std) 	WindowFactory for 'HorizontalLayoutContainer' windows removed. (05351F68)
+10/10/2014 01:21:04 (Std) 	Deleted WindowFactory for 'HorizontalLayoutContainer' windows.
+10/10/2014 01:21:04 (Std) 	---- Begining cleanup of GUI Scheme system ----
+10/10/2014 01:21:04 (Std) 	CEGUI::SchemeManager singleton destroyed. (0536A5D8)
+10/10/2014 01:21:04 (Std) 	CEGUI::WindowManager singleton destroyed (05369A98)
+10/10/2014 01:21:04 (Std) 	CEGUI::WindowFactoryManager singleton destroyed
+10/10/2014 01:21:04 (Std) 	CEGUI::WidgetLookManager singleton destroyed. (05372A58)
+10/10/2014 01:21:04 (Std) 	CEGUI::WindowRendererManager singleton destroyed (0536A560)
+10/10/2014 01:21:04 (Std) 	CEGUI::AnimationManager singleton destroyed (05369938)
+10/10/2014 01:21:04 (Std) 	CEGUI::RenderEffectManager singleton destroyed (0536A588)
+10/10/2014 01:21:04 (Std) 	---- Begining cleanup of Font system ----
+10/10/2014 01:21:04 (Std) 	CEGUI::FontManager singleton destroyed. (05369CE8)
+10/10/2014 01:21:04 (Std) 	[CEGUI::ImageManager] Unregistered Image type: BasicImage
+10/10/2014 01:21:04 (Std) 	[CEGUI::ImageManager] Singleton destroyed (05369900)
+10/10/2014 01:21:04 (Std) 	CEGUI::GlobalEventSet singleton destroyed. (05369350)
+10/10/2014 01:21:04 (Std) 	CEGUI::System singleton destroyed. (053658E0)
+10/10/2014 01:21:04 (Std) 	---- CEGUI System destruction completed ----
+10/10/2014 01:21:04 (Std) 	CEGUI::Logger singleton destroyed. (053725C0)
