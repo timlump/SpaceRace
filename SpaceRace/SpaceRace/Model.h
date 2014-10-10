@@ -9,8 +9,10 @@ public:
 	void wipeModel();
 	void draw(Shader *shader);
 	std::vector<Mesh> mMeshes;
-	void animate(std::string name, double timeStep);
+	void animate(std::string name, float &time, bool loop=true);
 	static std::map<std::string,GLuint> mTextureIDs;
+	static std::map<std::string,Model*> mModels;
+	static Model *loadModel(std::string filename);
 private:
 	std::string mDirectory;
 	void processNode(aiNode* node, const aiScene* scene);

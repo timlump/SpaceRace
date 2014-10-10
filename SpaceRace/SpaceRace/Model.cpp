@@ -3,6 +3,7 @@
 #include "dirent.h"
 
 std::map<std::string,GLuint> Model::mTextureIDs = std::map<std::string,GLuint>();
+std::map<std::string,Model*> Model::mModels = std::map<std::string,Model*>();
 
 Model::Model(std::string filename)
 {
@@ -33,6 +34,20 @@ Model::Model(std::string filename)
 
 	mDirectory = filename.substr(0,filename.find_last_of('/'));
 	processNode(mScene->mRootNode,mScene);
+
+	mModels[filename] = this;
+}
+
+Model* Model::loadModel(std::string filename)
+{
+	if(mModels.find(filename)!=mModels.end())
+	{
+		return mModels[filename];
+	}
+	else
+	{
+		return new Model(filename);
+	}
 }
 
 void Model::wipeModel()
@@ -246,11 +261,11 @@ void Model::processMaterial(aiMesh* mesh, const aiScene* scene, Material &materi
 	}
 }
 
-void Model::animate(std::string name, double timeStep)
+void Model::animate(std::string name, float &time, bool loop)
 {
 	for(int i = 0 ; i < mMeshes.size() ; i++)
 	{
-		mMeshes[i].animate(name,timeStep);
+		mMeshes[i].animate(name,time,loop);
 	}
 }
 

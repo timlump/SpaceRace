@@ -22,17 +22,25 @@ void Mesh::wipeMesh()
 	glDeleteVertexArrays(1,&mVAO);
 }
 
-void Mesh::animate(std::string name,double time)
+void Mesh::animate(std::string name,float &time, bool loop)
 {
 	auto animation = mAnimations.find(name);
 	if(animation != mAnimations.end())
 	{
 		aiAnimation *anim = mScene->mAnimations[animation->second];
 
-		mCurrentTime += time*anim->mTicksPerSecond;
+		mCurrentTime = time*anim->mTicksPerSecond;
 		if(mCurrentTime>anim->mDuration)
 		{
-			mCurrentTime = 0.0f;
+			if(loop)
+			{
+				mCurrentTime = 0.0f;
+				time = 0.0f;
+			}
+			else
+			{
+				return;
+			}
 		}
 		readNodes(mCurrentTime,mScene->mRootNode,anim,glm::mat4(1.0f));
 	}

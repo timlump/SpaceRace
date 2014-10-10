@@ -62,7 +62,7 @@ public:
 	void draw(Shader *shader);
 	void drawBones(Shader *shader);
 	void setup();
-	void animate(std::string name,double time);
+	void animate(std::string name,float &time, bool loop=true);
 	static glm::mat4 aMat4toGLMMat4(aiMatrix4x4 &matrix);
 private:
 	void loadBones();

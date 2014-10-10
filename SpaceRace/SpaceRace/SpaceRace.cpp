@@ -11,6 +11,7 @@ struct Entity
 	Model *model;
 	glm::mat4 modelMatrix;
 	btRigidBody *rigidBody;
+	float time;
 };
 
 struct Camera
@@ -65,7 +66,9 @@ void logic(std::vector<Entity*> *entities, lua_State *luaState, btDiscreteDynami
 
 	for(int i = 0 ; i < entities->size() ; i++)
 	{
-		(*entities)[i]->model->animate("",timeStep);
+		Entity *entity = (*entities)[i];
+		entity->time += timeStep;
+		entity->model->animate("",entity->time);
 	}
 
 }
@@ -84,7 +87,6 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity*> *entities,std:
 	GLuint perspectiveID = glGetUniformLocation(shader->mProgram,"projection");
 	GLuint viewPosID = glGetUniformLocation(shader->mProgram,"viewPos");
 
-	
 	glUniformMatrix4fv(viewID,1,GL_FALSE,glm::value_ptr(camera->view));
 	glUniformMatrix4fv(perspectiveID,1,GL_FALSE,glm::value_ptr(camera->projection));
 	glUniform3fv(viewPosID,1,glm::value_ptr(camera->position));
@@ -186,12 +188,23 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::vector<Entity*> entities;
 	
 	Entity *entity = new Entity();
-	Model objectModel =  Model("../../../Media/Models/boblampclean.md5mesh");
-	entity->model = &objectModel;
+	Model *objectModel =  Model::loadModel("../../../Media/Models/boblampclean.md5mesh");
+	entity->model = objectModel;
 	entity->modelMatrix = glm::mat4(1.0f);
 	entity->modelMatrix = glm::scale(entity->modelMatrix,glm::vec3(0.04f));
 	entity->modelMatrix = glm::rotate(entity->modelMatrix,-90.0f,glm::vec3(1.0,0.0,0.0));
+	entity->time = 0.0f;
 	entities.push_back(entity);
+
+	/*Entity *ent2 = new Entity();
+	Model *objectModel2 = Model::loadModel("../../../Media/Models/boblampclean.md5mesh");
+	ent2->model = objectModel2;
+	ent2->modelMatrix = glm::mat4(1.0f);
+	ent2->modelMatrix = glm::translate(ent2->modelMatrix,glm::vec3(-1.0,0.0,0.0));
+	ent2->modelMatrix = glm::scale(ent2->modelMatrix,glm::vec3(0.04f));
+	ent2->modelMatrix = glm::rotate(ent2->modelMatrix,-90.0f,glm::vec3(1.0,0.0,0.0));
+	ent2->time = 0.0f;
+	entities.push_back(ent2);*/
 
 	int width,height;
 	glfwGetWindowSize(window,&width,&height);
@@ -220,7 +233,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	for(int i = 0 ; i < entities.size() ; i++)
 	{
-		entities[i]->model->wipeModel();
 		delete entities[i];
 		entities.clear();
 	}
@@ -248,6 +260,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		glDeleteTextures(1,&it3->second);
 	}
 
+	std::map<std::string,Model*>::iterator it4;
+	for(it4 = Model::mModels.begin() ; it4!=Model::mModels.end() ; it4++)
+	{
+		it4->second->wipeModel();
+		delete it4->second;
+	}
 
 	delete dynamicsWorld;
 	delete solver;
