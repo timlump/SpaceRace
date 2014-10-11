@@ -22,6 +22,7 @@
 #include <sstream>
 
 #include <lua.hpp>
+#include <luabind\luabind.hpp>
 
 #include <GL\glew.h>
 #define GLFW_DLL

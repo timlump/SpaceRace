@@ -19,7 +19,6 @@ struct Camera
 	glm::mat4 view;
 	glm::mat4 projection;
 	glm::vec3 position;
-	float nearP,farP,fov;
 };
 
 struct Light
@@ -28,7 +27,53 @@ struct Light
 };
 
 //GLOBALS
+glm::vec3 clearColor(0.0f);
 Camera camera;
+GLFWmonitor *monitor;
+GLFWwindow *window;
+int width,height;
+
+//lua functions
+void setClearColor(float r, float g, float b)
+{
+	clearColor.r = r;
+	clearColor.g = g;
+	clearColor.b = b;
+}
+void initializeWindow(bool fullScreen, int AASamples)
+{
+	glfwInit();
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+	glfwWindowHint(GLFW_SAMPLES,AASamples);
+
+	monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode *vmode = glfwGetVideoMode(monitor);
+
+	width = vmode->width;
+	height = vmode->height;
+
+	window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",(fullScreen)?monitor:NULL,NULL);
+	glfwMakeContextCurrent(window);
+
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+}
+void setupPerspectiveMatrix(float fov, float nearP, float farP)
+{
+	camera.projection = glm::perspective(fov,(float)width/height,nearP,farP);
+}
+void setupViewMatrix(float pX, float pY, float pZ, float oX, float oY, float oZ, float uX, float uY, float uZ)
+{
+	camera.view = glm::lookAt(glm::vec3(pX,pY,pZ),glm::vec3(oX,oY,oZ),glm::vec3(uX,uY,uZ));
+}
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
 void updateFrameRate(GLFWwindow *window)
@@ -77,7 +122,7 @@ void draw(GLFWwindow *window,Shader *shader, std::vector<Entity*> *entities,std:
 {
 	//glFlush();
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	glClearColor(CORN_FLOWER_BLUE);//XNA nostalgia
+	glClearColor(clearColor.r,clearColor.g,clearColor.b,1.0f);
 
 	shader->bind();
 
@@ -130,34 +175,22 @@ void io(GLFWwindow *window)
 int _tmain(int argc, _TCHAR* argv[])
 {
 #pragma region INIT
-	//opengl
-	glfwInit();
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
-	glfwWindowHint(GLFW_SAMPLES,16);
-
-	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
-	const GLFWvidmode *vmode = glfwGetVideoMode(monitor);
-
-	GLFWwindow *window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",NULL,NULL);
-	glfwMakeContextCurrent(window);
-
-	glewExperimental = GL_TRUE;
-	glewInit();
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	//shader
-	Shader gameShader = Shader("C:\\Users\\Timothy\\Projects\\Media\\Shaders\\entityShader.vert","C:\\Users\\Timothy\\Projects\\Media\\Shaders\\entityShader.frag");
-
 	//scripting
 	lua_State *luaState = luaL_newstate();
 	luaL_openlibs(luaState);
+	luabind::open(luaState);
+
+	//bind functions to lua
+	luabind::module(luaState)[luabind::def("initializeWindow",initializeWindow)];
+	luabind::module(luaState)[luabind::def("setClearColor",setClearColor)];
+	luabind::module(luaState)[luabind::def("setupPerspectiveMatrix",setupPerspectiveMatrix)];
+	luabind::module(luaState)[luabind::def("setupViewMatrix",setupViewMatrix)];
+
+	//setup script
+	luaL_dofile(luaState,"../../../Media/Scripts/setup.lua");
+
+	//shader
+	Shader gameShader = Shader("../../../Media/Shaders/entityShader.vert","../../../Media/Shaders/entityShader.frag");
 
 	//user interface
 	CEGUI::OpenGL3Renderer& guiRenderer = CEGUI::OpenGL3Renderer::bootstrapSystem();
@@ -208,13 +241,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	int width,height;
 	glfwGetWindowSize(window,&width,&height);
-
-	camera.nearP = 0.1f;
-	camera.farP = 100.0f;
-	camera.fov = 67.0f;
-	camera.position = glm::vec3(0.0f,0.0f,5.0f);
-	camera.projection = glm::perspective(camera.fov,(float)width/height,camera.nearP,camera.farP);
-	camera.view = glm::lookAt(camera.position,glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
 	 
 #pragma endregion INIT
 

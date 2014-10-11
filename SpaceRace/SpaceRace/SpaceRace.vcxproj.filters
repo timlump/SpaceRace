@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{e9c7c3ea-4b1c-49c2-b905-57f905f3ce72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\LUA">
+      <UniqueIdentifier>{e44c28f7-0520-4dcf-8516-8f8bbf0cd8c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -63,6 +66,9 @@
     </None>
     <None Include="..\..\..\Media\Shaders\entityShader.vert">
       <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Media\Scripts\setup.lua">
+      <Filter>Source Files\LUA</Filter>
     </None>
   </ItemGroup>
 </Project>
