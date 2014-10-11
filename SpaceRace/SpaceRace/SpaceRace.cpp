@@ -8,6 +8,7 @@
 
 struct Entity
 {
+	std::string name;
 	Model *model;
 	glm::mat4 modelMatrix;
 	btRigidBody *rigidBody;
@@ -32,6 +33,15 @@ Camera camera;
 GLFWmonitor *monitor;
 GLFWwindow *window;
 int width,height;
+std::vector<Entity*> entities;
+std::vector<Light> lights;
+irrklang::ISoundEngine *soundEngine;
+Shader *gameShader;
+btBroadphaseInterface *broadphase;
+btDefaultCollisionConfiguration *collisionConfiguration;
+btCollisionDispatcher *dispatcher;
+btSequentialImpulseConstraintSolver *solver;
+btDiscreteDynamicsWorld *dynamicsWorld;
 
 //lua functions
 void setClearColor(float r, float g, float b)
@@ -40,7 +50,7 @@ void setClearColor(float r, float g, float b)
 	clearColor.g = g;
 	clearColor.b = b;
 }
-void initializeWindow(bool fullScreen, int AASamples)
+void initializeEngine(bool fullScreen, int AASamples)
 {
 	glfwInit();
 
@@ -65,6 +75,24 @@ void initializeWindow(bool fullScreen, int AASamples)
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+
+	//devil
+	ilInit();
+
+	//irrklang
+	soundEngine = irrklang::createIrrKlangDevice();
+	//irrklang::ISound *music = soundEngine->play2D("../../../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
+	//irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
+	//fx->enableDistortionSoundEffect();
+
+	broadphase = new btDbvtBroadphase();
+	collisionConfiguration = new btDefaultCollisionConfiguration();
+	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	solver = new btSequentialImpulseConstraintSolver;
+	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+
+	//shader
+	gameShader = new Shader("../../../Media/Shaders/entityShader.vert","../../../Media/Shaders/entityShader.frag");
 }
 void setupPerspectiveMatrix(float fov, float nearP, float farP)
 {
@@ -73,6 +101,22 @@ void setupPerspectiveMatrix(float fov, float nearP, float farP)
 void setupViewMatrix(float pX, float pY, float pZ, float oX, float oY, float oZ, float uX, float uY, float uZ)
 {
 	camera.view = glm::lookAt(glm::vec3(pX,pY,pZ),glm::vec3(oX,oY,oZ),glm::vec3(uX,uY,uZ));
+}
+void loadEntity(std::string name, std::string filename)
+{
+	Entity *entity = new Entity();
+	Model *objectModel =  Model::loadModel(filename);
+	entity->name = name;
+	entity->model = objectModel;
+	entity->modelMatrix = glm::mat4(1.0f);
+	entity->time = 0.0f;
+	entities.push_back(entity);
+}
+void createLight(float x, float y, float z)
+{
+	Light light;
+	light.lightPos = glm::vec3(x,y,z);
+	lights.push_back(light);
 }
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
@@ -181,66 +225,19 @@ int _tmain(int argc, _TCHAR* argv[])
 	luabind::open(luaState);
 
 	//bind functions to lua
-	luabind::module(luaState)[luabind::def("initializeWindow",initializeWindow)];
+	luabind::module(luaState)[luabind::def("initializeEngine",initializeEngine)];
 	luabind::module(luaState)[luabind::def("setClearColor",setClearColor)];
 	luabind::module(luaState)[luabind::def("setupPerspectiveMatrix",setupPerspectiveMatrix)];
 	luabind::module(luaState)[luabind::def("setupViewMatrix",setupViewMatrix)];
+	luabind::module(luaState)[luabind::def("loadEntity",loadEntity)];
+	luabind::module(luaState)[luabind::def("createLight",createLight)];
 
 	//setup script
 	luaL_dofile(luaState,"../../../Media/Scripts/setup.lua");
 
-	//shader
-	Shader gameShader = Shader("../../../Media/Shaders/entityShader.vert","../../../Media/Shaders/entityShader.frag");
-
 	//user interface
 	CEGUI::OpenGL3Renderer& guiRenderer = CEGUI::OpenGL3Renderer::bootstrapSystem();
-
-	//sound
-	irrklang::ISoundEngine *soundEngine = irrklang::createIrrKlangDevice();
-	//irrklang::ISound *music = soundEngine->play2D("../../../Media/Audio/MF-W-90.XM",true,false,true,irrklang::ESM_AUTO_DETECT,true);
-	//irrklang::ISoundEffectControl *fx = music->getSoundEffectControl();
-	//fx->enableDistortionSoundEffect();
-
-	//devil
-	ilInit();
-
-	//physics
-	btBroadphaseInterface *broadphase = new btDbvtBroadphase();
-	btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
-	btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
-	btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver;
-	btDiscreteDynamicsWorld *dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-
-	//load lights
-	std::vector<Light> lights;
-	Light light;
-	light.lightPos = glm::vec3(0.0f,5.0f,4.0f);
-	lights.push_back(light);
-
-	//load models
-	std::vector<Entity*> entities;
 	
-	Entity *entity = new Entity();
-	Model *objectModel =  Model::loadModel("../../../Media/Models/boblampclean.md5mesh");
-	entity->model = objectModel;
-	entity->modelMatrix = glm::mat4(1.0f);
-	entity->modelMatrix = glm::scale(entity->modelMatrix,glm::vec3(0.04f));
-	entity->modelMatrix = glm::rotate(entity->modelMatrix,-90.0f,glm::vec3(1.0,0.0,0.0));
-	entity->time = 0.0f;
-	entities.push_back(entity);
-
-	/*Entity *ent2 = new Entity();
-	Model *objectModel2 = Model::loadModel("../../../Media/Models/boblampclean.md5mesh");
-	ent2->model = objectModel2;
-	ent2->modelMatrix = glm::mat4(1.0f);
-	ent2->modelMatrix = glm::translate(ent2->modelMatrix,glm::vec3(-1.0,0.0,0.0));
-	ent2->modelMatrix = glm::scale(ent2->modelMatrix,glm::vec3(0.04f));
-	ent2->modelMatrix = glm::rotate(ent2->modelMatrix,-90.0f,glm::vec3(1.0,0.0,0.0));
-	ent2->time = 0.0f;
-	entities.push_back(ent2);*/
-
-	int width,height;
-	glfwGetWindowSize(window,&width,&height);
 	 
 #pragma endregion INIT
 
@@ -250,7 +247,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		updateFrameRate(window);
 		logic(&entities,luaState,dynamicsWorld);
-		draw(window,&gameShader,&entities,&lights,&camera);
+		draw(window,gameShader,&entities,&lights,&camera);
 		io(window);
 	}
 #pragma endregion CORE
@@ -298,6 +295,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	delete dispatcher;
 	delete collisionConfiguration;
 	delete broadphase;
+
+	delete gameShader;
 
 	soundEngine->drop();
 	guiRenderer.destroySystem();
