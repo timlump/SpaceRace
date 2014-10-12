@@ -70,9 +70,9 @@ void Entity::update(lua_State *state)
 	{
 		try
 		{
-				luabind::globals(state)["CURRENT_ENTITY"] = this;
 				std::string path = SCRIPT_PATH+mUpdateLua;
-				luabind::call_function<void>(state,"dofile",path.c_str());
+				luaL_dofile(state,path.c_str());
+				luabind::call_function<void>(state,"update",this);
 		}
 		catch (luabind::error e)
 		{
@@ -80,7 +80,6 @@ void Entity::update(lua_State *state)
 		}
 	}
 }
-
 
 void Entity::registerWithLua(lua_State *state)
 {
