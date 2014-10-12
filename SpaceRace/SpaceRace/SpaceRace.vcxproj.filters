@@ -70,5 +70,11 @@
     <None Include="..\..\..\Media\Scripts\setup.lua">
       <Filter>Source Files\LUA</Filter>
     </None>
+    <None Include="..\..\..\Media\Shaders\skyShader.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Media\Shaders\skyShader.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

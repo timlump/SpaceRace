@@ -7,6 +7,14 @@ std::map<std::string,Model*> Model::mModels = std::map<std::string,Model*>();
 
 Model::Model(std::string filename)
 {
+	mHalfExtents = glm::vec3(0.0f,0.0f,0.0f);
+	mMaxX = std::numeric_limits<float>::min();
+	mMaxY = std::numeric_limits<float>::min();
+	mMaxZ = std::numeric_limits<float>::min();
+	mMinX = std::numeric_limits<float>::max();
+	mMinY = std::numeric_limits<float>::max();
+	mMinZ = std::numeric_limits<float>::max();
+
 	mImport = new Assimp::Importer();
 	mScene = mImport->ReadFile(filename,aiProcessPreset_TargetRealtime_Quality);
 
@@ -34,6 +42,8 @@ Model::Model(std::string filename)
 
 	mDirectory = filename.substr(0,filename.find_last_of('/'));
 	processNode(mScene->mRootNode,mScene);
+
+	mHalfExtents = glm::vec3(abs(mMaxX-mMinX)/2.0f,abs(mMaxY-mMinY)/2.0f,abs(mMaxZ-mMaxZ)/2.0f);
 
 	mModels[filename] = this;
 }
@@ -100,6 +110,37 @@ void Model::processGeometry(aiMesh* mesh, std::vector<Vertex> &vertices, std::ve
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
 		vertex.position = vector;
+
+		//get min,max
+		if(vector.x > mMaxX)
+		{
+			mMaxX = vector.x;
+		}
+
+		if(vector.x < mMinX)
+		{
+			mMinX = vector.x;
+		}
+
+		if(vector.y > mMaxY)
+		{
+			mMaxY = vector.y;
+		}
+
+		if(vector.y < mMinY)
+		{
+			mMinY = vector.y;
+		}
+
+		if(vector.z > mMaxZ)
+		{
+			mMaxZ = vector.z;
+		}
+
+		if(vector.z < mMinZ)
+		{
+			mMinZ = vector.z;
+		}
 
 		//normals
 		vector.x = mesh->mNormals[i].x;
@@ -335,3 +376,4 @@ GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean
 
 	return tex;
 }
+

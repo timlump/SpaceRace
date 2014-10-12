@@ -5,9 +5,16 @@
 
 #pragma once
 
+#define NOMINMAX
 #define CORN_FLOWER_BLUE 0.39f,0.58f,0.92f,1.0f
 #define FPS_TRACK_DELAY 0.25
 #define MAX_LIGHTS 64
+
+#define MODEL_PATH "../../../Media/Models/"
+#define SHADER_PATH "../../../Media/Shaders/"
+#define AUDIO_PATH "../../../Media/Audio/"
+#define SCRIPT_PATH "../../../Media/Scripts/"
+#define CUBE_PATH "../../../Media/CubeMaps/"
 
 #include "targetver.h"
 
@@ -20,6 +27,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <limits>
 
 #include <lua.hpp>
 #include <luabind\luabind.hpp>

@@ -8,11 +8,12 @@ public:
 	Model(std::string filename);
 	void wipeModel();
 	void draw(Shader *shader);
-	std::vector<Mesh> mMeshes;
 	void animate(std::string name, float &time, bool loop=true);
 	static std::map<std::string,GLuint> mTextureIDs;
 	static std::map<std::string,Model*> mModels;
 	static Model *loadModel(std::string filename);
+	std::vector<Mesh> mMeshes;
+	glm::vec3 mHalfExtents;
 private:
 	std::string mDirectory;
 	void processNode(aiNode* node, const aiScene* scene);
@@ -21,6 +22,7 @@ private:
 	void processMaterial(aiMesh* mesh, const aiScene* scene, Material &material);
 	GLuint loadMaterialTexture(aiMaterial* mat, aiTextureType type,GLboolean &success);
 
+	float mMaxX,mMaxY,mMaxZ,mMinX,mMinY,mMinZ;
 	const aiScene *mScene;
 	Assimp::Importer *mImport;
 };
