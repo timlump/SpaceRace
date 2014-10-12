@@ -18,6 +18,8 @@
 
 #include "targetver.h"
 
+#include <AntTweakBar.h>
+
 #include <stdio.h>
 #include <tchar.h>
 
@@ -33,7 +35,7 @@
 #include <luabind\luabind.hpp>
 
 #include <GL\glew.h>
-#define GLFW_DLL
+
 #include <GLFW\glfw3.h>
 
 #include <glm\glm.hpp>

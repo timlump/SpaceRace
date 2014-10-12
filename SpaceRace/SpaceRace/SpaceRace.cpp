@@ -2,18 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Model.h"
-
-struct Entity
-{
-	std::string name;
-	Model *model;
-	glm::mat4 scaleMatrix, rotationMatrix, translationMatrix, modelMatrix;
-	btRigidBody *rigidBody;
-	btCollisionShape *collisionShape;
-	float time;
-	bool animate;
-};
+#include "Entity.h"
 
 struct Camera
 {
@@ -48,6 +37,7 @@ btDefaultCollisionConfiguration *collisionConfiguration;
 btCollisionDispatcher *dispatcher;
 btSequentialImpulseConstraintSolver *solver;
 btDiscreteDynamicsWorld *dynamicsWorld;
+TwBar *bar;
 
 //object arrays
 std::vector<Entity*> entities;
@@ -66,6 +56,8 @@ Shader *gameShader, *skyBoxShader;
 SkyBox *skyBox = NULL;
 GLuint skyVAO, skyVBO;
 
+
+
 //functions
 void initialiseEngine();
 void destroyEngine();
@@ -78,40 +70,18 @@ void setClearColor(float r, float g, float b)
 	clearColor.b = b;
 }
 
-void createEntity(std::string name, std::string filename)
+Entity *createEntity(std::string name, std::string filename, float pX, float pY, float pZ, float rX, float rY, float rZ, float rW, float mass)
 {
 	std::string path = MODEL_PATH + filename;
 	if(entityMap.find(name)==entityMap.end())
 	{
-		Entity *entity = new Entity();
-		Model *objectModel =  Model::loadModel(path);
-		entity->name = name;
-		entity->model = objectModel;
-		entity->scaleMatrix = glm::mat4(1.0f);
-		entity->rotationMatrix = glm::mat4(1.0f);
-		entity->translationMatrix = glm::mat4(1.0f);
-		entity->modelMatrix = glm::mat4(1.0f);
-		entity->time = 0.0f;
-		entity->animate = false;
-		//create collision object
-
-		glm::vec3 halfExtents = objectModel->mHalfExtents;
-		btCollisionShape *collisionShape = new btBoxShape(btVector3(halfExtents.x,halfExtents.y,halfExtents.z));
-		btDefaultMotionState *motionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,0,0)));
-		btScalar mass = 1.0f;
-		btVector3 inertia(0,0,0);
-		collisionShape->calculateLocalInertia(mass,inertia);
-		btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass,motionState,collisionShape,inertia);
-		btRigidBody *rigidBody = new btRigidBody(rigidBodyCI);
-
-		dynamicsWorld->addRigidBody(rigidBody);
-		entity->collisionShape = collisionShape;
-		entity->rigidBody = rigidBody;
+		Entity *entity = new Entity(name,path,dynamicsWorld,glm::vec3(pX,pY,pZ),glm::quat(rW,rX,rY,rZ),mass);
 
 		//store in map and vector
 		entities.push_back(entity);
 		entityMap[name] = entity;
 	}
+	return entityMap[name];
 }
 
 void createLight(std::string name,float x, float y, float z)
@@ -225,45 +195,6 @@ void setSkyBox(std::string folder)
 	glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void translateEntity(std::string name, float x, float y, float z, bool local)
-{
-	if(entityMap.find(name)!=entityMap.end())
-	{
-		Entity *entity = entityMap[name];
-		if(!local)
-		{
-			entity->translationMatrix = glm::mat4(1.0f);
-		}
-		entity->translationMatrix = glm::translate(entity->translationMatrix,glm::vec3(x,y,z));
-	}
-}
-
-void scaleEntity(std::string name, float x, float y, float z, bool local)
-{
-	if(entityMap.find(name)!=entityMap.end())
-	{
-		Entity *entity = entityMap[name];
-		if(!local)
-		{
-			entity->scaleMatrix = glm::mat4(1.0f);
-		}
-		entity->scaleMatrix = glm::scale(entity->scaleMatrix,glm::vec3(x,y,z));
-	}
-}
-
-void rotateEntity(std::string name, float x, float y, float z, float angle, bool local)
-{
-	if(entityMap.find(name)!=entityMap.end())
-	{
-		Entity *entity = entityMap[name];
-		if(!local)
-		{
-			entity->rotationMatrix = glm::mat4(1.0f);
-		}
-		entity->rotationMatrix = glm::rotate(entity->rotationMatrix,angle,glm::vec3(x,y,z));
-	}
-}
-
 void setWorldGravity(float x, float y, float z)
 {
 	dynamicsWorld->setGravity(btVector3(x,y,z));
@@ -305,13 +236,8 @@ void logic()
 
 	for(int i = 0 ; i < entities.size() ; i++)
 	{
-		Entity *entity = entities[i];
-		entity->modelMatrix = entity->scaleMatrix*entity->rotationMatrix*entity->translationMatrix;
-		if(entity->animate)
-		{
-			entity->time += timeStep;
-			entity->model->animate("",entity->time);
-		}
+		entities[i]->animate(timeStep);
+		entities[i]->update(luaState);
 	}
 
 }
@@ -368,16 +294,15 @@ void draw()
 
 		for(int i = 0 ; i < entities.size() ; i++)
 		{
-			Entity *entity = entities[i];
-			GLuint modelID = glGetUniformLocation(gameShader->mProgram,"model");
-			glUniformMatrix4fv(modelID,1,GL_FALSE,glm::value_ptr(entity->modelMatrix));
-			entity->model->draw(gameShader);
+			entities[i]->draw(gameShader);
 		}
 
 		//draw stuff here....
 
 		gameShader->unbind();
 	}
+
+	TwDraw();
 	
 	glfwSwapBuffers(window);
 }
@@ -394,18 +319,19 @@ void io()
 int _tmain(int argc, _TCHAR* argv[])
 {
 	initialiseEngine();
+
 	//scripting
 	luaState = luaL_newstate();
 	luaL_openlibs(luaState);
 	luabind::open(luaState);
 
+	//bind classes to lua
+	Entity::registerWithLua(luaState);
+
 	//bind functions to lua
 	luabind::module(luaState)[luabind::def("setClearColor",setClearColor)];
 	luabind::module(luaState)[luabind::def("createLight",createLight)];
 	luabind::module(luaState)[luabind::def("createEntity",createEntity)];
-	luabind::module(luaState)[luabind::def("translateEntity",translateEntity)];
-	luabind::module(luaState)[luabind::def("scaleEntity",scaleEntity)];
-	luabind::module(luaState)[luabind::def("rotateEntity",rotateEntity)];
 	luabind::module(luaState)[luabind::def("createCamera",createCamera)];
 	luabind::module(luaState)[luabind::def("setCurrentCamera",setCurrentCamera)];
 	luabind::module(luaState)[luabind::def("createSound",createSound)];
@@ -414,7 +340,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	luabind::module(luaState)[luabind::def("setWorldGravity",setWorldGravity)];
 
 	//setup script
-	luaL_dofile(luaState,SCRIPT_PATH"setup.lua");
+	try
+	{
+		luabind::call_function<void>(luaState,"dofile",SCRIPT_PATH"setup.lua");
+	}
+	catch (luabind::error e)
+	{
+		printf("Exception: %s\n",e.what());
+	}
 
 #pragma region CORE
 	//main loop
@@ -526,10 +459,19 @@ void initialiseEngine()
 	glEnableVertexAttribArray (0);
 	glBindBuffer (GL_ARRAY_BUFFER, skyVBO);
 	glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	TwInit(TW_OPENGL_CORE,NULL);
+	TwWindowSize(width,height);
+	//bar = TwNewBar("Tweak Bar");
+
+	//setup callbacks
+	//glfwSetMouseButtonCallback(window,atMouseButton);
 }
 
 void destroyEngine()
 {
+	TwTerminate();
+
 	glDeleteBuffers(1,&skyVBO);
 	glDeleteVertexArrays(1,&skyVAO);
 
@@ -571,14 +513,8 @@ void destroyEngine()
 
 	for(int i = 0 ; i < entities.size() ; i++)
 	{
-		Entity *entity = entities[i];
-
-		dynamicsWorld->removeRigidBody(entity->rigidBody);
-		delete entity->rigidBody->getMotionState();
-		delete entity->rigidBody;
-		delete entity->collisionShape;
-
-		delete entity;
+		entities[i]->wipeEntity(dynamicsWorld);
+		delete entities[i];
 	}
 
 	for(int i = 0 ; i < lights.size() ; i++)
