@@ -1,31 +1,33 @@
 #include "stdafx.h"
-#include "Model.h"
 
 class Entity
 {
 public:
-	Entity(std::string name, std::string filename, btDynamicsWorld *world, glm::vec3 position, glm::quat rotation, float mass);
-	void wipeEntity(btDynamicsWorld *world);
-	void draw(Shader *shader);
-	void animate(float timeStep);
-	void update(lua_State *state);
+	Entity(std::string luaScript)
+	{
+		mParent = NULL;
+		mSound = NULL;
+		mScript = luaScript;
+	}
 
-	void setLinearVelocity(float x, float y, float z);
-	void setAngularVelocity(float x, float y, float z);
+	enum InteractionType {KEY, COLLISION};
+	struct EntityInteraction
+	{
+		Entity *entity;
+		InteractionType type;
+		std::string message;
+		float value;
+	};
 
-	glm::mat4 mModelMatrix;
-	bool mAnimate;
-	bool mLoop;
-	std::string mCurrentAnimation;
-	float mAnimationTime;
+	virtual void update(float timeStep, lua_State *state) = 0;
+	virtual void interact(EntityInteraction interaction, lua_State *state) = 0;
+	virtual void playSound(std::string filename) = 0;
 
-	std::string mUpdateLua;
-	std::string mInteractLua;
+	glm::mat4 mWorldTransform;
+	irrklang::ISound *mSound;
 
-	static void registerWithLua(lua_State *state);
 private:
-	std::string mName;
-	Model *mModel;
-	btRigidBody *mRigidBody;
-	btCollisionShape *mCollisionShape;
+	Entity *mParent;
+	std::vector<Entity*> mChildren;
+	std::string mScript;
 };
