@@ -174,16 +174,15 @@ void initialiseEngine()
 	ilInit();
 
 	//interface
-	gui = &CEGUI::OpenGL3Renderer::bootstrapSystem();
+	CEGUI::OpenGL3Renderer::bootstrapSystem();
 	//load resources
 	CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
-	rp->setResourceGroupDirectory("schemes",LAYOUT_PATH"datafiles/schemes/");
-	rp->setResourceGroupDirectory("imagesets",LAYOUT_PATH"datafiles/imagesets/");
-	rp->setResourceGroupDirectory("fonts",LAYOUT_PATH"datafiles/fonts/");
-	rp->setResourceGroupDirectory("layouts",LAYOUT_PATH"datafiles/layouts/");
-	rp->setResourceGroupDirectory("looknfeels",LAYOUT_PATH"datafiles/looknfeel/");
-	rp->setResourceGroupDirectory("schemes",LAYOUT_PATH"datafiles/schemes/");
-	rp->setResourceGroupDirectory("lua_scripts", LAYOUT_PATH"datafiles/lua_scripts/");
+	rp->setResourceGroupDirectory("imagesets","../../../Media/UI/datafiles/imagesets/");
+	rp->setResourceGroupDirectory("fonts","../../../Media/UI/datafiles/fonts/");
+	rp->setResourceGroupDirectory("layouts","../../../Media/UI/datafiles/layouts/");
+	rp->setResourceGroupDirectory("looknfeels","../../../Media/UI/datafiles/looknfeel/");
+	rp->setResourceGroupDirectory("schemes","../../../Media/UI/datafiles/schemes/");
+	rp->setResourceGroupDirectory("lua_scripts","../../../Media/UI/datafiles/lua_scripts/");
 
 	//setup resources
 	CEGUI::ImageManager::setImagesetDefaultResourceGroup("imagesets");
@@ -197,16 +196,20 @@ void initialiseEngine()
 	if (parser->isPropertyPresent("SchemaDefaultResourceGroup"))
 		parser->setProperty("SchemaDefaultResourceGroup", "schemas");
 
-	//CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
-    //CEGUI::FontManager::getSingleton().createFromFile( "DejaVuSans-10.font" );
-
-	//CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultFont( "DejaVuSans-10" );
-	//CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage( "TaharezLook/MouseArrow" );
-	//CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultTooltipType( "TaharezLook/Tooltip" );
-
-	//guiRoot = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("TextDemo.layout" );
-
-
+	try
+	{
+		CEGUI::SchemeManager::getSingleton().createFromFile( "TaharezLook.scheme" );
+		CEGUI::FontManager::getSingleton().createFromFile( "DejaVuSans-10.font" );
+		CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultFont( "DejaVuSans-10" );
+		CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage( "TaharezLook/MouseArrow" );
+		CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultTooltipType( "TaharezLook/Tooltip" );
+		guiRoot = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("TabPage.layout" );
+		CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(guiRoot);
+	}
+	catch(CEGUI::Exception e)
+	{
+		printf("CEGUI Exception: %s\n",e.what());
+	}
 
 	SDL_Init(SDL_INIT_JOYSTICK);
 	if(SDL_NumJoysticks() < 1)
