@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#define SHADER_H
+
 class Shader
 {
 public:

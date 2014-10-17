@@ -1,5 +1,7 @@
 #include "stdafx.h"
+#ifndef SHADER_H
 #include "Shader.h"
+#endif
 
 #define BONES_PER_VERTEX 4
 

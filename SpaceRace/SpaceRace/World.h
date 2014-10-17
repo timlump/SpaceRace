@@ -1,6 +1,17 @@
 #include "stdafx.h"
 #include "Model.h"
 #include "Entity.h"
+#include "Camera.h"
+
+enum InputType{JOY_X, JOY_Y, MOUSE_X, MOUSE_Y, KEY};
+enum KeyType{FORWARD,BACKWARD,LEFT,RIGHT,
+	LEAN_LEFT,LEAN_RIGHT,
+	JUMP,CROUCH,PRONE,SPIN_180,
+	FIRE,MELEE,RELOAD,AIM,
+	FLASHLIGHT,USE,FREELOOK,TALK,
+	SLOT_1,SLOT_2,SLOT_3,SLOT_4,SLOT_5,
+	SLOT_6,SLOT_7,SLOT_8,SLOT_9,SLOT_0,
+	SLOT_UP,SLOW_DOWN,CONFIRM};
 
 class World
 {
@@ -9,15 +20,7 @@ public:
 	~World();
 	void update(float timeStep);
 	void draw();
-
-	/*void addCamera(Camera *camera);
-	void removeCamera(Camera *camera);
-
-	void addLight(Light *light);
-	void removeLight(Light *light);
-
-	void addCharacter(Character *character);
-	void removeCharacter(Character *character);*/
+	void control(InputType type, int value); 
 
 	static void registerWithLua(lua_State *state);
 private:
@@ -31,11 +34,9 @@ private:
 	btDiscreteDynamicsWorld *mDynamicsWorld;
 #pragma endregion MODULES
 #pragma region VARIABLES
+	Shader *mShader;
 	std::vector<Entity*> mEntities;
+	Camera *mCamera;
 
-	//std::map<std::string,Entity*> mEntityMap;
-	//std::map<std::string,Light*> mLightMap;
-	//std::map<std::string,Camera*> mCameraMap;
-	//std::map<std::string,irrklang::ISoundSource*> mSoundMap;
 #pragma endregion VARIABLES
 };

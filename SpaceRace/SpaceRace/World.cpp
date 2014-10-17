@@ -3,6 +3,7 @@
 
 World::World(lua_State *state)
 {
+	mShader = NULL;
 	mLuaState = state; //don't own this
 	mSoundEngine = irrklang::createIrrKlangDevice();
 	mBroadphase = new btDbvtBroadphase();
@@ -24,14 +25,28 @@ World::~World()
 
 void World::update(float timeStep)
 {
-
+	std::vector<Entity*>::iterator it;
+	for(it = mEntities.begin() ; it!=mEntities.end() ; it++)
+	{
+		(*it)->update(timeStep,mLuaState);
+	}
 }
 
 void World::draw()
+{
+	std::vector<Entity*>::iterator it;
+	for(it = mEntities.begin() ; it!= mEntities.end() ; it++)
+	{
+		(*it)->draw(mShader);
+	}
+}
+
+void World::control(InputType type, int value)
 {
 
 }
 
 void World::registerWithLua(lua_State *state)
 {
+
 }

@@ -9,6 +9,7 @@
 #define CORN_FLOWER_BLUE 0.39f,0.58f,0.92f,1.0f
 #define FPS_TRACK_DELAY 0.25
 #define MAX_LIGHTS 64
+const int DEADZONE = 2000;
 
 #define MODEL_PATH "../../../Media/Models/"
 #define SHADER_PATH "../../../Media/Shaders/"
@@ -56,6 +57,8 @@
 #include <IL\ilut.h>
 
 #include <btBulletDynamicsCommon.h>
+
+#include <SDL.h>
 
 #include <assert.h>
 

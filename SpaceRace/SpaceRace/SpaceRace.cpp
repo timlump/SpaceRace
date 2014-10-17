@@ -5,18 +5,16 @@
 #include "World.h"
 
 //GLOBALS
-GLFWmonitor *monitor;
-GLFWwindow *window;
+GLFWmonitor *monitor = NULL;
+GLFWwindow *window = NULL;
 int width,height;
 
 //modules
-lua_State *luaState;
-TwBar *bar;
-World *world;
+lua_State *luaState = NULL;
+TwBar *bar = NULL;
+World *world = NULL;
 
-Shader *gameShader, *skyBoxShader;
-
-
+SDL_Joystick* controller = NULL;
 
 //functions
 void initialiseEngine();
@@ -71,6 +69,37 @@ void io()
 	if(glfwGetKey(window,GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window,GL_TRUE);
+	}
+
+	if(controller)
+	{
+		SDL_Event event;
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+			case SDL_JOYAXISMOTION:
+				if(event.jaxis.value < -DEADZONE || event.jaxis.value > DEADZONE)
+				{
+					//x axis
+					if(event.jaxis.axis == 0)
+					{
+						world->control(InputType::JOY_X,event.jaxis.value);
+					}
+					else if(event.jaxis.axis == 1)
+					{
+						world->control(InputType::JOY_Y,event.jaxis.value);
+					}
+				}
+				break;
+			case SDL_JOYBUTTONDOWN:
+				//printf("Down: %d\n",event.jbutton.button);
+				break;
+			case SDL_JOYBUTTONUP:
+				//printf("Up: %d\n",event.jbutton.button);
+				break;
+			}
+		}
 	}
 }
 
@@ -140,12 +169,33 @@ void initialiseEngine()
 	//devil
 	ilInit();
 
+	SDL_Init(SDL_INIT_JOYSTICK);
+	if(SDL_NumJoysticks() < 1)
+	{
+		printf("No joysticks!\n");
+	}
+
+	else
+	{
+		SDL_JoystickEventState(SDL_ENABLE);
+		controller = SDL_JoystickOpen(0);
+		if(controller)
+		{
+			printf("Using %s\n",SDL_JoystickNameForIndex(0));
+		}
+	}
+
 	world = new World(luaState);
 }
 
 void destroyEngine()
 {
 	delete world;
+	if(controller)
+	{
+		SDL_JoystickClose(controller);
+	}
+	SDL_Quit();
 	lua_close(luaState);
 	glfwTerminate();
 }
