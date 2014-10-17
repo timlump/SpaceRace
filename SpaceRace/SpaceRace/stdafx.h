@@ -16,6 +16,7 @@ const int DEADZONE = 2000;
 #define AUDIO_PATH "../../../Media/Audio/"
 #define SCRIPT_PATH "../../../Media/Scripts/"
 #define CUBE_PATH "../../../Media/CubeMaps/"
+#define LAYOUT_PATH "../../../Media/UI/"
 
 #include "targetver.h"
 
@@ -48,7 +49,13 @@ const int DEADZONE = 2000;
 #include <assimp\postprocess.h>
 
 #include <CEGUI\RendererModules\OpenGL\GL3Renderer.h>
-#include <CEGUI\System.h>
+#include <CEGUI\CEGUI.h>
+//#include <CEGUI\System.h>
+//#include <CEGUI\WindowManager.h>
+//#include <CEGUI\DefaultResourceProvider.h>
+//#include <CEGUI\ImageManager.h>
+//#include <CEGUI\Font.h>
+//#include <CEGUI\Scheme.h>
 
 #include <irrKlang.h>
 

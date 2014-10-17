@@ -55,6 +55,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,6 +77,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SDL)\include;$(LUABIND)\include;$(BOOST)\include;$(BULLET)\src;$(IRRKLANG)\include;$(CEGUI)\build\cegui\include;$(CEGUI)\cegui\include;$(LUA)\include;$(DEVIL)\include;$(GLFW)\include;$(GLEW)\include;$(ASSIMP)\include;$(DEVIL)\include;$(GLM);$(ANT)\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
