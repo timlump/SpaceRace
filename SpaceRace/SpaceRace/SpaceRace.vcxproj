@@ -61,7 +61,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SDL)\lib\x86;$(LUABIND)\Debug;$(BULLET)\build\lib\Debug;$(IRRKLANG)\lib\Win32-visualStudio;$(CEGUI)\build\lib;$(LUA)\lib;$(DEVIL)\lib;$(ANT)\lib;$(ASSIMP)\lib\x86;$(GLEW)\lib\Release\Win32;$(GLFW)\build\src\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;LuaBind.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;irrKlang.lib;CEGUIBase-0.lib;CEGUIOpenGLRenderer-0.lib;lua5.1.lib;DevIL.lib;ILU.lib;ILUT.lib;AntTweakBar.lib;assimp.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;LuaBind.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;irrKlang.lib;CEGUIBase-0_d.lib;CEGUIOpenGLRenderer-0_d.lib;lua5.1.lib;DevIL.lib;ILU.lib;ILUT.lib;AntTweakBar.lib;assimp.lib;glew32.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <AdditionalOptions>/NODEFAULTLIB:MSVCRT %(AdditionalOptions)</AdditionalOptions>

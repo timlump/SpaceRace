@@ -16,8 +16,23 @@ World *world = NULL;
 
 SDL_Joystick* controller = NULL;
 
-CEGUI::OpenGL3Renderer* gui = NULL;
 CEGUI::Window *guiRoot = NULL;
+
+//CEGUI callbacks - http://cegui.org.uk/wiki/Identifying_Multiple_Event_Sources_From_A_Single_Callback
+bool ceguiButtonClick(const CEGUI::EventArgs& e)
+{
+	const CEGUI::MouseEventArgs& we = static_cast<const CEGUI::MouseEventArgs&>(e);
+
+	CEGUI::String senderID = we.window->getName();
+
+	if(senderID == "QuitButton")
+	{
+		glfwSetWindowShouldClose(window,GL_TRUE);
+	}
+
+	return true;
+}
+
 
 //functions
 void initialiseEngine();
@@ -55,6 +70,10 @@ void logic()
 {
 	float timeStep = getTimeStep();
 	world->update(timeStep);
+	if(CEGUI::System::getSingletonPtr())
+	{
+		CEGUI::System::getSingleton().injectTimePulse(timeStep);
+	}
 }
 
 void draw()
@@ -62,7 +81,13 @@ void draw()
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
 	world->draw();
-	CEGUI::System::getSingleton().renderAllGUIContexts();
+
+	glDisable(GL_DEPTH_TEST);
+	if(CEGUI::System::getSingletonPtr())
+	{
+		CEGUI::System::getSingleton().renderAllGUIContexts();
+	}
+	glEnable(GL_DEPTH_TEST);
 	
 	glfwSwapBuffers(window);
 }
@@ -74,35 +99,58 @@ void io()
 	{
 		glfwSetWindowShouldClose(window,GL_TRUE);
 	}
+	
+	//handle keyboard
 
-	if(controller)
+
+	//handle mouse
+	double currentMouseX, currentMouseY;
+	glfwGetCursorPos(window,&currentMouseX,&currentMouseY);
+	glfwSetCursorPos(window,(double)width/2,(double)height/2);
+
+	float mouseDX = currentMouseX-(double)width/2;
+	float mouseDY = currentMouseY-(double)height/2;
+
+	if(CEGUI::System::getSingletonPtr())
 	{
-		SDL_Event event;
-		while(SDL_PollEvent(&event))
+		CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseMove(mouseDX,mouseDY);
+	}
+
+	if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		if(CEGUI::System::getSingletonPtr())
 		{
-			switch(event.type)
+			CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonClick(CEGUI::MouseButton::LeftButton);
+		}
+	}
+
+
+	//handle joystick
+	SDL_Event event;
+	while(SDL_PollEvent(&event))
+	{
+		switch(event.type)
+		{
+		case SDL_JOYAXISMOTION:
+			if(event.jaxis.value < -DEADZONE || event.jaxis.value > DEADZONE)
 			{
-			case SDL_JOYAXISMOTION:
-				if(event.jaxis.value < -DEADZONE || event.jaxis.value > DEADZONE)
+				//x axis
+				if(event.jaxis.axis == 0)
 				{
-					//x axis
-					if(event.jaxis.axis == 0)
-					{
-						world->control(InputType::JOY_X,event.jaxis.value);
-					}
-					else if(event.jaxis.axis == 1)
-					{
-						world->control(InputType::JOY_Y,event.jaxis.value);
-					}
+					world->control(InputType::JOY_X,event.jaxis.value);
 				}
-				break;
-			case SDL_JOYBUTTONDOWN:
-				//printf("Down: %d\n",event.jbutton.button);
-				break;
-			case SDL_JOYBUTTONUP:
-				//printf("Up: %d\n",event.jbutton.button);
-				break;
+				else if(event.jaxis.axis == 1)
+				{
+					world->control(InputType::JOY_Y,event.jaxis.value);
+				}
 			}
+			break;
+		case SDL_JOYBUTTONDOWN:
+			printf("Down: %d\n",event.jbutton.button);
+			break;
+		case SDL_JOYBUTTONUP:
+			printf("Up: %d\n",event.jbutton.button);
+			break;
 		}
 	}
 }
@@ -164,6 +212,8 @@ void initialiseEngine()
 	window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",NULL,NULL);
 	glfwMakeContextCurrent(window);
 
+	glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
+
 	glewExperimental = GL_TRUE;
 	glewInit();
 
@@ -199,12 +249,16 @@ void initialiseEngine()
 	try
 	{
 		CEGUI::SchemeManager::getSingleton().createFromFile( "TaharezLook.scheme" );
-		CEGUI::FontManager::getSingleton().createFromFile( "DejaVuSans-10.font" );
-		CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultFont( "DejaVuSans-10" );
-		CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage( "TaharezLook/MouseArrow" );
-		CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultTooltipType( "TaharezLook/Tooltip" );
-		guiRoot = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("TabPage.layout" );
+		CEGUI::FontManager::getSingleton().createFromFile("DejaVuSans-12.font");
+		CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultFont("DejaVuSans-12");
+		CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
+		CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultTooltipType("TaharezLook/Tooltip");
+		
+		guiRoot = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("SpaceRace_MainMenu.layout" );
 		CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(guiRoot);
+
+		//wire up callbacks
+		guiRoot->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
 	}
 	catch(CEGUI::Exception e)
 	{
