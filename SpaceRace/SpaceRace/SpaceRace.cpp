@@ -3,7 +3,9 @@
 
 #include "stdafx.h"
 #include "World.h"
+#include "dirent.h"
 
+#pragma region GLOBALS
 //GLOBALS
 GLFWmonitor *monitor = NULL;
 GLFWwindow *window = NULL;
@@ -20,6 +22,7 @@ CEGUI::Window *mainMenu = NULL;
 CEGUI::Window *joinMenu = NULL;
 CEGUI::Window *hostMenu = NULL;
 CEGUI::Window *settingsMenu = NULL;
+CEGUI::Window *gameMenu = NULL;
 CEGUI::Window *currentMenu = NULL;
 
 std::map<int,KeyType> keyBindings;
@@ -31,11 +34,76 @@ std::map<KeyType,int> tempMouseBindings;
 std::map<KeyType,int> tempJoystickBindings;
 
 enum BindType{KEY_BIND,MOUSE_BIND,JOY_BIND};
+#pragma endregion GLOBALS
 
 //functions
 void initialiseEngine();
 void destroyEngine();
 
+void switchMenu(CEGUI::Window *window)
+{
+	currentMenu->hide();
+	currentMenu = window;
+	currentMenu->show();
+	CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(currentMenu);
+}
+
+void setPreviewImage(CEGUI::String filename)
+{
+	try
+	{
+		CEGUI::DefaultWindow *previewImage = (CEGUI::DefaultWindow*)currentMenu->getChild("PreviewImage");
+		try
+		{
+			CEGUI::ImageManager::getSingleton().addFromImageFile(filename+"_preview","MapPreviews/"+filename+".png");
+		}
+		catch(CEGUI::AlreadyExistsException e)
+		{
+			//ignore
+		}
+		previewImage->setProperty("Image",filename+"_preview");
+	}
+	catch (CEGUI::Exception e)
+	{
+		printf("CEGUI Exception: %s\n",e.what());
+	}
+}
+
+//http://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
+void populateMapList()
+{
+	//lets clear out the combobox
+	CEGUI::Combobox *mapList = (CEGUI::Combobox *)currentMenu->getChild("MapComboBox");
+	mapList->resetList();
+	DIR *dir = opendir(MAP_PATH);
+	bool success = false;
+	struct dirent *ent;
+	if(dir)
+	{
+		while((ent = readdir(dir))!=NULL)
+		{
+			std::string name(ent->d_name);
+			//lets see if it is the correct format for a map
+			if(name.find(MAP_FORMAT)!=std::string::npos)
+			{
+				CEGUI::ListboxItem *item = new CEGUI::ListboxTextItem(name);
+				item->setAutoDeleted(true);
+				mapList->addItem(item);
+				success = true;
+			}
+		}
+		closedir(dir);
+	}
+
+	if(success)
+	{
+		CEGUI::ListboxItem *item = mapList->getListboxItemFromIndex(0);
+		setPreviewImage(item->getText());
+		mapList->setItemSelectState(item,true);
+	}
+}
+
+#pragma region KEY_BINDING_CODE
 //http://cegui.org.uk/wiki/GLFW_to_CEGUI_Key_and_Mouse_Mapping
 CEGUI::Key::Scan GlfwToCeguiKey(int glfwKey)
 {
@@ -226,7 +294,8 @@ std::string actionKeyToKeyBox(KeyType type)
 		return "SlotDownBox";
 	case KeyType::CONFIRM:
 		return "ConfirmBox";
-
+	default:
+		return "Error";
 	}
 }
 
@@ -436,12 +505,9 @@ void saveKeyBinding(std::string filename)
 	}
 	file.close();
 }
+#pragma endregion KEY_BINDING_CODE
 
-void applyKeyBindingToSettings()
-{
-
-}
-
+#pragma region CALLBACKS
 //GLFW callbacks
 void charCallback(GLFWwindow* window, unsigned int unicode)
 {
@@ -529,14 +595,6 @@ void mouseMotionCallback(GLFWwindow* window, double xpos, double ypos)
 	world->control(InputType::MOUSE_Y,mouseDY);
 }
 
-void switchMenu(CEGUI::Window *window)
-{
-	currentMenu->hide();
-	currentMenu = window;
-	currentMenu->show();
-	CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(currentMenu);
-}
-
 //CEGUI callbacks - http://cegui.org.uk/wiki/Identifying_Multiple_Event_Sources_From_A_Single_Callback
 bool ceguiButtonClick(const CEGUI::EventArgs& e)
 {
@@ -548,14 +606,26 @@ bool ceguiButtonClick(const CEGUI::EventArgs& e)
 	{
 		glfwSetWindowShouldClose(window,GL_TRUE);
 	}
+	else if(senderID == "HostButton")
+	{
+		switchMenu(hostMenu);
+		populateMapList();
+	}
 	else if(senderID == "SettingsButton")
 	{
 		switchMenu(settingsMenu);
 	}
+	else if(senderID == "HostBackButton")
+	{
+		switchMenu(mainMenu);
+	}
+	else if(senderID == "HostStartButton")
+	{
+		//to do
+	}
 	else if(senderID == "SettingsBackButton")
 	{
 		switchMenu(mainMenu);
-		applyKeyBindingToSettings();
 	}
 	else if(senderID == "SettingsApplyButton")
 	{
@@ -564,6 +634,15 @@ bool ceguiButtonClick(const CEGUI::EventArgs& e)
 
 	return true;
 }
+
+bool mapSelectionAccepted(const CEGUI::EventArgs& e)
+{
+	CEGUI::Combobox *mapComboBox = (CEGUI::Combobox *)currentMenu->getChild("MapComboBox");
+	CEGUI::ListboxTextItem *item = (CEGUI::ListboxTextItem*)mapComboBox->getSelectedItem();
+	setPreviewImage(item->getText());
+	return true;
+}
+#pragma endregion CALLBACKS
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
 void updateFrameRate()
@@ -721,7 +800,7 @@ void initialiseEngine()
 	width = vmode->width;
 	height = vmode->height;
 
-	window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",NULL,NULL);
+	window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",monitor,NULL);
 	glfwMakeContextCurrent(window);
 
 	glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
@@ -780,11 +859,21 @@ void initialiseEngine()
 		settingsMenu = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("SpaceRace_SettingsMenu.layout");
 		settingsMenu->hide();
 
+		hostMenu = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("SpaceRace_HostMenu.layout");
+		hostMenu->hide();
+
 		//wire up callbacks
 		mainMenu->getChild("SettingsButton")->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
+		mainMenu->getChild("HostButton")->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
 		mainMenu->getChild("QuitButton")->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
+
+		hostMenu->getChild("HostStartButton")->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
+		hostMenu->getChild("HostBackButton")->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
+		hostMenu->getChild("MapComboBox")->subscribeEvent(CEGUI::Combobox::EventListSelectionAccepted,&mapSelectionAccepted);
+
 		settingsMenu->getChild("SettingsBackButton")->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
 		settingsMenu->getChild("SettingsApplyButton")->subscribeEvent(CEGUI::PushButton::EventClicked,&ceguiButtonClick);
+
 
 		//fill up settings menu with keybinds
 		std::map<KeyType,int>::iterator it;

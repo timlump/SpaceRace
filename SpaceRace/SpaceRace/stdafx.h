@@ -20,6 +20,8 @@ const int AXIS_RANGE = 32767;
 #define CUBE_PATH "../../../Media/CubeMaps/"
 #define LAYOUT_PATH "../../../Media/UI/"
 #define KEYBIND_PATH "../../../Media/"
+#define MAP_PATH "../../../Media/Maps/"
+#define MAP_FORMAT ".sr_xml"
 
 #include "targetver.h"
 
