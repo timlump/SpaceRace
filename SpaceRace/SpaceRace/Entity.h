@@ -6,6 +6,22 @@
 #include "Shader.h"
 #endif
 
+#ifndef WORLD_H
+#include "World.h"
+#endif
+
+class Entity;
+
+enum InteractionType {USER, COLLISION};
+struct EntityInteraction
+{
+	Entity *entity;
+	InteractionType type;
+	//KeyType key;
+	std::string message;
+	float value;
+};
+
 class Entity
 {
 public:
@@ -16,15 +32,6 @@ public:
 		mEngine = NULL;
 		mScript = luaScript;
 	}
-
-	enum InteractionType {KEY, COLLISION};
-	struct EntityInteraction
-	{
-		Entity *entity;
-		InteractionType type;
-		std::string message;
-		float value;
-	};
 
 	bool playSound(std::string filename, bool loop, bool forcePlay)
 	{

@@ -10,6 +10,7 @@
 #define FPS_TRACK_DELAY 0.25
 #define MAX_LIGHTS 64
 const int DEADZONE = 2000;
+const int AXIS_RANGE = 32767;
 
 #define MEDIA_PATH "../../../Media/"
 #define MODEL_PATH "../../../Media/Models/"
@@ -18,6 +19,7 @@ const int DEADZONE = 2000;
 #define SCRIPT_PATH "../../../Media/Scripts/"
 #define CUBE_PATH "../../../Media/CubeMaps/"
 #define LAYOUT_PATH "../../../Media/UI/"
+#define KEYBIND_PATH "../../../Media/"
 
 #include "targetver.h"
 
