@@ -6,6 +6,7 @@ World::World(lua_State *state)
 	mShader = NULL;
 	mLuaState = state; //don't own this
 	mSoundEngine = irrklang::createIrrKlangDevice();
+	mMusic = NULL;
 	mBroadphase = new btDbvtBroadphase();
 	mCollisionConfiguration = new btDefaultCollisionConfiguration();
 	mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
@@ -70,7 +71,65 @@ void World::control(InputType type, float value)
 	}
 }
 
+bool World::playMusic(std::string filename,bool forcePlay)
+{
+	std::string fullPath = AUDIO_PATH + filename;
+	if(mSoundEngine)
+	{
+		if(mMusic)
+		{
+			if(mMusic->isFinished())
+			{
+				mMusic->drop();
+				mMusic = mSoundEngine->play2D(fullPath.c_str(),true);
+				return true;
+			}
+			else if (forcePlay)
+			{
+				mMusic->stop();
+				mMusic->drop();
+				mMusic = mSoundEngine->play2D(fullPath.c_str(),true);
+				return true;
+			}
+		}
+		else
+		{
+			mMusic = mSoundEngine->play2D(fullPath.c_str(),true);
+		}
+	}
+}
+
+void World::host(std::string serverName, std::string mapFilename, int maxPlayers, std::string password)
+{
+	printf("Server Name: %s, Map Name: %s, Max Players: %d, Password: %s\n",serverName.c_str(),mapFilename.c_str(),maxPlayers,password.c_str());
+	loadMap(MAP_PATH+mapFilename);
+}
+
+void World::quit()
+{
+
+}
+
+void World::stopMusic(std::string filename)
+{
+	if(mMusic)
+	{
+		mMusic->stop();
+		mMusic->drop();
+	}
+}
+
 void World::registerWithLua(lua_State *state)
+{
+	luabind::module(state)
+		[
+			luabind::class_<World>("World")
+			.def("playMusic",&World::playMusic)
+			.def("stopMusic",&World::stopMusic)
+		];
+}
+
+void World::loadMap(std::string filename)
 {
 
 }

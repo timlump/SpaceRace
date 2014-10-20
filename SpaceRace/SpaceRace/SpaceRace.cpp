@@ -621,7 +621,27 @@ bool ceguiButtonClick(const CEGUI::EventArgs& e)
 	}
 	else if(senderID == "HostStartButton")
 	{
-		//to do
+		currentMenu->hide();
+		CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
+		
+		//get server name
+		CEGUI::Editbox *serverNameBox = (CEGUI::Editbox *)currentMenu->getChild("ServerNameBox");
+		std::string serverName(serverNameBox->getText().c_str());
+
+		//get map name
+		CEGUI::Combobox *mapComboBox = (CEGUI::Combobox *)currentMenu->getChild("MapComboBox");
+		CEGUI::ListboxTextItem *item = (CEGUI::ListboxTextItem*)mapComboBox->getSelectedItem();
+		std::string mapName(item->getText().c_str());
+
+		//get max players
+		CEGUI::Spinner *maxPlayerSpinner = (CEGUI::Spinner *)currentMenu->getChild("MaxPlayerSpinner");
+		int maxPlayers = (int)maxPlayerSpinner->getCurrentValue();
+
+		//get password
+		CEGUI::Editbox *passwordBox = (CEGUI::Editbox *)currentMenu->getChild("PasswordBox");
+		std::string password(passwordBox->getText().c_str());
+
+		world->host(serverName,mapName,maxPlayers,password);
 	}
 	else if(senderID == "SettingsBackButton")
 	{
@@ -757,16 +777,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//bind classes to lua
 	World::registerWithLua(luaState);
+	luabind::globals(luaState)["World"] = world;
 
 	//setup script
-	/*try
+	try
 	{
 		luabind::call_function<void>(luaState,"dofile",SCRIPT_PATH"setup.lua");
 	}
 	catch (luabind::error e)
 	{
 		printf("Exception: %s\n",e.what());
-	}*/
+	}
 
 #pragma region CORE
 	//main loop
@@ -800,7 +821,7 @@ void initialiseEngine()
 	width = vmode->width;
 	height = vmode->height;
 
-	window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",monitor,NULL);
+	window = glfwCreateWindow(vmode->width,vmode->height,"Space Race",NULL,NULL);
 	glfwMakeContextCurrent(window);
 
 	glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
@@ -928,6 +949,7 @@ void initialiseEngine()
 
 void destroyEngine()
 {
+	world->quit();
 	delete world;
 	if(controller)
 	{

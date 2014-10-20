@@ -25,11 +25,8 @@ const int AXIS_RANGE = 32767;
 
 #include "targetver.h"
 
-#include <AntTweakBar.h>
-
 #include <stdio.h>
 #include <tchar.h>
-
 #include <string>
 #include <vector>
 #include <map>
@@ -37,6 +34,11 @@ const int AXIS_RANGE = 32767;
 #include <fstream>
 #include <sstream>
 #include <limits>
+#include <assert.h>
+
+#include <tinyxml2.h>
+
+#include <AntTweakBar.h>
 
 #include <lua.hpp>
 #include <luabind\luabind.hpp>
@@ -66,7 +68,6 @@ const int AXIS_RANGE = 32767;
 
 #include <SDL.h>
 
-#include <assert.h>
 
 
 // TODO: reference additional headers your program requires here

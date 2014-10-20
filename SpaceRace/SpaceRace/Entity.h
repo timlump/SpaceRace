@@ -43,6 +43,7 @@ public:
 
 	bool playSound(std::string filename, bool loop, bool forcePlay)
 	{
+		std::string fullPath = AUDIO_PATH + filename;
 		if(mEngine)
 		{
 			//get sound position
@@ -55,20 +56,20 @@ public:
 				if(mSound->isFinished())
 				{
 					mSound->drop();
-					mSound = mEngine->play3D(filename.c_str(),soundPos,loop);
+					mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop);
 					return true;
 				}
 				else if (forcePlay)
 				{
 					mSound->stop();
 					mSound->drop();
-					mSound = mEngine->play3D(filename.c_str(),soundPos,loop);
+					mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop);
 					return true;
 				}
 			}
 			else
 			{
-				mSound = mEngine->play3D(filename.c_str(),soundPos,loop);
+				mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop);
 				return true;
 			}
 		}
