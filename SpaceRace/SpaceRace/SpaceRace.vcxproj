@@ -101,6 +101,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UtilFunctions.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +119,7 @@
   <ItemGroup>
     <None Include="..\..\..\Media\Scripts\setup.lua" />
     <None Include="..\..\..\Media\Scripts\test.lua" />
+    <None Include="..\..\..\Media\Scripts\worldUpdate.lua" />
     <None Include="..\..\..\Media\Shaders\entityShader.frag" />
     <None Include="..\..\..\Media\Shaders\entityShader.vert" />
     <None Include="..\..\..\Media\Shaders\skyShader.frag" />

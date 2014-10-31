@@ -10,17 +10,21 @@
 class World
 {
 public:
-	World(lua_State *state);
+	World();
 	~World();
 	void update(float timeStep);
 	void draw();
 	void control(InputType type, KeyType key, KeyAction action);
 	void control(InputType type, float value);
 	bool playMusic(std::string filename,bool forcePlay);
-	void stopMusic(std::string filename);
+	void stopMusic();
+	void setWorldColour(float r, float g, float b);
+	float getTime();
 	void host(std::string serverName, std::string mapFilename, int maxPlayers, std::string password);
 	void quit();
 	static void registerWithLua(lua_State *state);
+
+	void setLuaState(lua_State *state, std::string updateScript);
 private:
 	void loadMap(std::string filename);
 #pragma region MODULES
@@ -33,6 +37,7 @@ private:
 	btDiscreteDynamicsWorld *mDynamicsWorld;
 #pragma endregion MODULES
 #pragma region VARIABLES
+	std::string mUpdateScript;
 	Shader *mShader;
 	std::vector<Entity*> mEntities;
 	Camera *mCamera;

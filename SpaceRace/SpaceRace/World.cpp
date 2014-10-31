@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "World.h"
 
-World::World(lua_State *state)
+World::World()
 {
-	mShader = NULL;
-	mLuaState = state; //don't own this
+	mUpdateScript = "";
+	mShader = new Shader(SHADER_PATH"entityShader.vert",SHADER_PATH"entityShader.frag");
+	mLuaState = NULL; //don't own this
 	mSoundEngine = irrklang::createIrrKlangDevice();
 	mMusic = NULL;
 	mBroadphase = new btDbvtBroadphase();
@@ -26,10 +27,23 @@ World::~World()
 	delete mCollisionConfiguration;
 	delete mBroadphase;
 	delete mSoundEngine;
+	delete mShader;
 }
 
 void World::update(float timeStep)
 {
+	if(mLuaState && mUpdateScript.empty() == false)
+	{
+		try
+		{
+			luabind::call_function<void>(mLuaState,"dofile",mUpdateScript);
+		}
+		catch (luabind::error e)
+		{
+			printf("Exception: %s\n",e.what());
+		}
+	}
+
 	std::vector<Entity*>::iterator it;
 	for(it = mEntities.begin() ; it!=mEntities.end() ; it++)
 	{
@@ -81,22 +95,34 @@ bool World::playMusic(std::string filename,bool forcePlay)
 			if(mMusic->isFinished())
 			{
 				mMusic->drop();
-				mMusic = mSoundEngine->play2D(fullPath.c_str(),true);
+				mMusic = mSoundEngine->play2D(fullPath.c_str(),true,false,true);
 				return true;
 			}
 			else if (forcePlay)
 			{
 				mMusic->stop();
 				mMusic->drop();
-				mMusic = mSoundEngine->play2D(fullPath.c_str(),true);
+				mMusic = mSoundEngine->play2D(fullPath.c_str(),true,false,true);
 				return true;
 			}
 		}
 		else
 		{
-			mMusic = mSoundEngine->play2D(fullPath.c_str(),true);
+			mMusic = mSoundEngine->play2D(fullPath.c_str(),true,false,true);
+			return true;
 		}
 	}
+	return false;
+}
+
+void World::setWorldColour(float r, float g, float b)
+{
+	glClearColor(r,g,b,1.0f);
+}
+
+float World::getTime()
+{
+	return (float)glfwGetTime();
 }
 
 void World::host(std::string serverName, std::string mapFilename, int maxPlayers, std::string password)
@@ -110,12 +136,13 @@ void World::quit()
 
 }
 
-void World::stopMusic(std::string filename)
-{
+void World::stopMusic()
+{	
 	if(mMusic)
 	{
 		mMusic->stop();
 		mMusic->drop();
+		mMusic = NULL;
 	}
 }
 
@@ -126,7 +153,15 @@ void World::registerWithLua(lua_State *state)
 			luabind::class_<World>("World")
 			.def("playMusic",&World::playMusic)
 			.def("stopMusic",&World::stopMusic)
+			.def("setWorldColour",&World::setWorldColour)
+			.def("getTime",&World::getTime)
 		];
+}
+
+void World::setLuaState(lua_State *state, std::string updateScript)
+{
+	mLuaState = state;
+	mUpdateScript = updateScript;
 }
 
 void World::loadMap(std::string filename)

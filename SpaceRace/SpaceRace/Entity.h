@@ -56,20 +56,20 @@ public:
 				if(mSound->isFinished())
 				{
 					mSound->drop();
-					mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop);
+					mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop,false,true);
 					return true;
 				}
 				else if (forcePlay)
 				{
 					mSound->stop();
 					mSound->drop();
-					mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop);
+					mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop,false,true);
 					return true;
 				}
 			}
 			else
 			{
-				mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop);
+				mSound = mEngine->play3D(fullPath.c_str(),soundPos,loop,false,true);
 				return true;
 			}
 		}
@@ -81,7 +81,10 @@ public:
 		{
 			mSound->stop();
 			mSound->drop();
+			mSound = NULL;
+			return true;
 		}
+		return false;
 	}
 
 	void initialise(lua_State *state)

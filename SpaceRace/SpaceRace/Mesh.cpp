@@ -322,9 +322,12 @@ void Mesh::setup()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),(GLvoid*)(sizeof(glm::vec3)*2));
 
-	glGenBuffers(1,&mBBO);
-	glBindBuffer(GL_ARRAY_BUFFER,mBBO);
-	glBufferData(GL_ARRAY_BUFFER,mBones.size()*sizeof(VertexBone),&mBones[0],GL_STATIC_DRAW);
+	if(mBones.empty()==false)
+	{
+		glGenBuffers(1,&mBBO);
+		glBindBuffer(GL_ARRAY_BUFFER,mBBO);
+		glBufferData(GL_ARRAY_BUFFER,mBones.size()*sizeof(VertexBone),&mBones[0],GL_STATIC_DRAW);
+	}
 
 	//bones
 	glEnableVertexAttribArray(3);

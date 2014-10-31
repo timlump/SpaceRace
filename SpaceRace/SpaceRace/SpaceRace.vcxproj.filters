@@ -51,6 +51,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UtilFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -92,6 +95,9 @@
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="..\..\..\Media\Scripts\test.lua">
+      <Filter>Source Files\LUA</Filter>
+    </None>
+    <None Include="..\..\..\Media\Scripts\worldUpdate.lua">
       <Filter>Source Files\LUA</Filter>
     </None>
   </ItemGroup>
