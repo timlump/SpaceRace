@@ -6,20 +6,6 @@ World::World()
 	mUpdateScript = "";
 	mShader = new Shader(SHADER_PATH"entityShader.vert",SHADER_PATH"entityShader.frag");
 
-	for(int i = 0 ; i < MAX_LIGHTS ; i++)
-	{
-		char buffer[80];
-		sprintf(buffer,"lights[%d].lightPos",i);
-		mLightPosUniformLocs.push_back(glGetUniformLocation(mShader->mProgram,buffer));
-	}
-
-	for(int i = 0 ; i < MAX_LIGHTS ; i++)
-	{
-		char buffer[80];
-		sprintf(buffer,"lights[%d].lightColor",i);
-		mLightColUniformLocs.push_back(glGetUniformLocation(mShader->mProgram,buffer));
-	}
-
 	mLuaState = NULL; //don't own this
 	mSoundEngine = irrklang::createIrrKlangDevice();
 	mMusic = NULL;

@@ -48,8 +48,6 @@ private:
 	Shader *mShader;
 	std::vector<Entity*> mEntities;
 	std::vector<Light*> mLights;
-	std::vector<GLint> mLightPosUniformLocs;
-	std::vector<GLint> mLightColUniformLocs;
 	Camera *mCamera;
 	bool mKeyPressed[30];
 	irrklang::ISound *mMusic;
