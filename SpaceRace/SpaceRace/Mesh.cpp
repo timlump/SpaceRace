@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material, const aiScene *scene, aiMesh *mesh)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material, const aiScene *scene, aiMesh *mesh, Shader *shader)
 {
 	mVertices = vertices;
 	mIndices = indices;
@@ -11,13 +11,16 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material m
 	mMesh = mesh;
 	mCurrentTime = 0.0f;
 	mMaterial = material;
-	setup();
+	setup(shader);
 }
 
 void Mesh::wipeMesh()
 {
 	glDeleteBuffers(1,&mEBO);
-	glDeleteBuffers(1,&mBBO);
+	if(mBones.empty()==false)
+	{
+		glDeleteBuffers(1,&mBBO);
+	}
 	glDeleteBuffers(1,&mVBO);
 	glDeleteVertexArrays(1,&mVAO);
 }
@@ -118,117 +121,46 @@ glm::mat4 Mesh::aMat4toGLMMat4(aiMatrix4x4 &matrix)
 void Mesh::draw(Shader *shader)
 {
 #pragma region uniforms
-	GLuint hasBones = glGetUniformLocation(shader->mProgram,"hasBones");
+	GLint hasBones = glGetUniformLocation(shader->mProgram,"hasBones");
 	glUniform1i(hasBones,mMaterial.hasBones);
 
 	if(mMaterial.hasBones)
 	{
 		for(int i = 0 ; i < mBoneInfo.size() ; i++)
 		{
-			char buffer[80];
-			sprintf(buffer,"bones[%d]",i);
-			GLuint bones = glGetUniformLocation(shader->mProgram,buffer);
+			GLint bonePos = mBoneUniformLocs[i];
 
 			glm::mat4 transform = mBoneInfo[i].finalTransformation;
 
-			glUniformMatrix4fv(bones,1,GL_FALSE,glm::value_ptr(transform));
+			glUniformMatrix4fv(bonePos,1,GL_FALSE,glm::value_ptr(transform));
 		}
 	}
 
-	GLuint hasDiffuse = glGetUniformLocation(shader->mProgram,"material.hasDiffuse");
+	GLint hasDiffuse = glGetUniformLocation(shader->mProgram,"material.hasDiffuse");
 	glUniform1i(hasDiffuse,mMaterial.hasDiffuse);
 
-	GLuint hasAmbient = glGetUniformLocation(shader->mProgram,"material.hasAmbient");
-	glUniform1i(hasAmbient,mMaterial.hasAmbient);
-
-	GLuint hasSpecular = glGetUniformLocation(shader->mProgram,"material.hasSpecular");
-	glUniform1i(hasSpecular,mMaterial.hasSpecular);
-
-	GLuint hasEmission = glGetUniformLocation(shader->mProgram,"material.hasEmission");
-	glUniform1i(hasEmission,mMaterial.hasEmission);
-
-	GLuint hasShininess = glGetUniformLocation(shader->mProgram,"material.hasShininess");
-	glUniform1i(hasShininess,mMaterial.hasShininess);
-
-	GLuint hasDiffuseTexture = glGetUniformLocation(shader->mProgram,"material.hasDiffuseTexture");
+	GLint hasDiffuseTexture = glGetUniformLocation(shader->mProgram,"material.hasDiffuseTexture");
 	glUniform1i(hasDiffuseTexture,mMaterial.hasDiffuseTexture);
-
-	GLuint hasAmbientTexture = glGetUniformLocation(shader->mProgram,"material.hasAmbientTexture");
-	glUniform1i(hasAmbientTexture,mMaterial.hasAmbientTexture);
-
-	GLuint hasSpecularTexture = glGetUniformLocation(shader->mProgram,"material.hasSpecularTexture");
-	glUniform1i(hasSpecularTexture,mMaterial.hasSpecularTexture);
-
-	GLuint hasEmissionTexture = glGetUniformLocation(shader->mProgram,"material.hasEmissionTexture");
-	glUniform1i(hasEmissionTexture,mMaterial.hasEmissionTexture);
 
 	if(mMaterial.hasDiffuse)
 	{
-		GLuint diffuse = glGetUniformLocation(shader->mProgram,"material.diffuse");
+		GLint diffuse = glGetUniformLocation(shader->mProgram,"material.diffuse");
 		glUniform4fv(diffuse,1,glm::value_ptr(mMaterial.diffuse));
-	}
-
-	if(mMaterial.hasAmbient)
-	{
-		GLuint ambient = glGetUniformLocation(shader->mProgram,"material.ambient");
-		glUniform4fv(ambient,1,glm::value_ptr(mMaterial.ambient));
-	}
-
-	if(mMaterial.hasSpecular)
-	{
-		GLuint specular = glGetUniformLocation(shader->mProgram,"material.specular");
-		glUniform4fv(specular,1,glm::value_ptr(mMaterial.specular));
-	}
-
-	if(mMaterial.hasEmission)
-	{
-		GLuint emission = glGetUniformLocation(shader->mProgram,"material.emission");
-		glUniform4fv(emission,1,glm::value_ptr(mMaterial.emission));
-	}
-
-	if(mMaterial.hasShininess)
-	{
-		GLuint shininess = glGetUniformLocation(shader->mProgram,"material.shininess");
-		glUniform1f(shininess,mMaterial.shininess);
 	}
 
 	GLuint textureOffset = 0;
 
 	if(mMaterial.hasDiffuseTexture)
 	{
-		glActiveTexture(GL_TEXTURE0);
-		GLuint diffuseTexture = glGetUniformLocation(shader->mProgram,"material.diffuseTexture");
+		glActiveTexture(GL_TEXTURE0+textureOffset);
+		GLint diffuseTexture = glGetUniformLocation(shader->mProgram,"material.diffuseTexture");
 		glUniform1i(diffuseTexture,textureOffset);
 		glBindTexture(GL_TEXTURE_2D,mMaterial.diffuseTexture);
 		textureOffset++;
 	}
 
-	if(mMaterial.hasAmbientTexture)
-	{
-		glActiveTexture(GL_TEXTURE0+textureOffset);
-		GLuint ambientTexture = glGetUniformLocation(shader->mProgram,"material.ambientTexture");
-		glUniform1i(ambientTexture,textureOffset);
-		glBindTexture(GL_TEXTURE_2D,mMaterial.ambientTexture);
-		textureOffset++;
-	}
-
-	if(mMaterial.hasSpecularTexture)
-	{
-		glActiveTexture(GL_TEXTURE0+textureOffset);
-		GLuint specularTexture = glGetUniformLocation(shader->mProgram,"material.specularTexture");
-		glUniform1i(specularTexture,textureOffset);
-		glBindTexture(GL_TEXTURE_2D,mMaterial.specularTexture);
-		textureOffset++;
-	}
-
-	if(mMaterial.hasEmissionTexture)
-	{
-		glActiveTexture(GL_TEXTURE0+textureOffset);
-		GLuint emissionTexture = glGetUniformLocation(shader->mProgram,"material.emissionTexture");
-		glUniform1i(emissionTexture,textureOffset);
-		glBindTexture(GL_TEXTURE_2D,mMaterial.emissionTexture);
-	}
 	glActiveTexture(GL_TEXTURE0);
+
 #pragma endregion uniforms
 
 	glBindVertexArray(mVAO);
@@ -287,9 +219,19 @@ void Mesh::loadBones()
 	}
 }
 
-void Mesh::setup()
+void Mesh::setup(Shader *shader)
 {
 	loadBones();
+
+	if(mMaterial.hasBones)
+	{
+		for(int i = 0 ; i < mBoneInfo.size() ; i++)
+		{
+			char buffer[80];
+			sprintf(buffer,"bones[%d]",i);
+			mBoneUniformLocs.push_back(glGetUniformLocation(shader->mProgram,buffer));
+		}
+	}
 
 	for(int i = 0 ; i < mScene->mNumAnimations ; i++)
 	{

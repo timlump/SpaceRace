@@ -59,11 +59,11 @@ struct BoneInfo
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material, const aiScene *scene, aiMesh *mesh);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, Material material, const aiScene *scene, aiMesh *mesh, Shader *shader);
 	void wipeMesh();
 	void draw(Shader *shader);
 	void drawBones(Shader *shader);
-	void setup();
+	void setup(Shader *shader);
 	void animate(std::string name,float &time, bool loop=true);
 	static glm::mat4 aMat4toGLMMat4(aiMatrix4x4 &matrix);
 private:
@@ -83,6 +83,8 @@ private:
 	std::map<std::string,int> mBoneMapping;
 	std::map<std::string,int> mAnimations;
 	std::vector<BoneInfo> mBoneInfo;
+
+	std::vector<GLint> mBoneUniformLocs;
 
 	Material mMaterial;
 	GLuint mVAO,mVBO,mEBO,mBBO;

@@ -41,6 +41,10 @@ enum BindType{KEY_BIND,MOUSE_BIND,JOY_BIND};
 void initialiseEngine();
 void destroyEngine();
 void setupCEGUI();
+float getAspectRatio()
+{
+	return (float)width/(float)height;
+}
 
 
 #pragma region KEY_BINDING_CODE
@@ -186,7 +190,6 @@ bool ceguiMouseEventClick(const CEGUI::EventArgs& e)
 	return true;
 }
 
-
 #pragma endregion CALLBACKS
 
 //Anton's OpenGL 4 Tutorials - http://antongerdelan.net/opengl/
@@ -294,7 +297,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//bind classes to lua
 	World::registerWithLua(luaState);
+	//make world global so that it can be accessed in ALL game scripts
 	luabind::globals(luaState)["World"] = world;
+	luabind::module(luaState)
+		[
+			luabind::def("getAspectRatio",getAspectRatio)
+		];
 
 	world->setLuaState(luaState,SCRIPT_PATH"worldUpdate.lua");
 

@@ -5,6 +5,21 @@ World::World()
 {
 	mUpdateScript = "";
 	mShader = new Shader(SHADER_PATH"entityShader.vert",SHADER_PATH"entityShader.frag");
+
+	for(int i = 0 ; i < MAX_LIGHTS ; i++)
+	{
+		char buffer[80];
+		sprintf(buffer,"lights[%d].lightPos",i);
+		mLightPosUniformLocs.push_back(glGetUniformLocation(mShader->mProgram,buffer));
+	}
+
+	for(int i = 0 ; i < MAX_LIGHTS ; i++)
+	{
+		char buffer[80];
+		sprintf(buffer,"lights[%d].lightColor",i);
+		mLightColUniformLocs.push_back(glGetUniformLocation(mShader->mProgram,buffer));
+	}
+
 	mLuaState = NULL; //don't own this
 	mSoundEngine = irrklang::createIrrKlangDevice();
 	mMusic = NULL;
@@ -13,6 +28,7 @@ World::World()
 	mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
 	mSolver = new btSequentialImpulseConstraintSolver;
 	mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
+	mCamera = NULL;
 	for(int i = 0 ; i < 30 ; i++)
 	{
 		mKeyPressed[i] = false;
@@ -21,6 +37,10 @@ World::World()
 
 World::~World()
 {
+	if(mCamera)
+	{
+		delete mCamera;
+	}
 	delete mDynamicsWorld;
 	delete mSolver;
 	delete mDispatcher;
@@ -120,6 +140,11 @@ void World::setWorldColour(float r, float g, float b)
 	glClearColor(r,g,b,1.0f);
 }
 
+void World::setupCamera(float fov, float aspect, float nearPlane, float farPlane)
+{
+	mCamera = new Camera(fov,aspect,nearPlane,farPlane);
+}
+
 float World::getTime()
 {
 	return (float)glfwGetTime();
@@ -155,6 +180,7 @@ void World::registerWithLua(lua_State *state)
 			.def("stopMusic",&World::stopMusic)
 			.def("setWorldColour",&World::setWorldColour)
 			.def("getTime",&World::getTime)
+			.def("setupCamera",&setupCamera)
 		];
 }
 

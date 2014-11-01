@@ -6,6 +6,7 @@
 #include "Entity.h"
 #endif
 #include "Camera.h"
+#include "Light.h"
 
 class World
 {
@@ -16,9 +17,15 @@ public:
 	void draw();
 	void control(InputType type, KeyType key, KeyAction action);
 	void control(InputType type, float value);
+
+	//audio
 	bool playMusic(std::string filename,bool forcePlay);
 	void stopMusic();
+	//visuals
 	void setWorldColour(float r, float g, float b);
+
+	//utilities
+	void setupCamera(float fov, float aspect, float nearPlane, float farPlane);
 	float getTime();
 	void host(std::string serverName, std::string mapFilename, int maxPlayers, std::string password);
 	void quit();
@@ -40,6 +47,9 @@ private:
 	std::string mUpdateScript;
 	Shader *mShader;
 	std::vector<Entity*> mEntities;
+	std::vector<Light*> mLights;
+	std::vector<GLint> mLightPosUniformLocs;
+	std::vector<GLint> mLightColUniformLocs;
 	Camera *mCamera;
 	bool mKeyPressed[30];
 	irrklang::ISound *mMusic;

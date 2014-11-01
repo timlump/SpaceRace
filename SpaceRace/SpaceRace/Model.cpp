@@ -5,7 +5,7 @@
 std::map<std::string,GLuint> Model::mTextureIDs = std::map<std::string,GLuint>();
 std::map<std::string,Model*> Model::mModels = std::map<std::string,Model*>();
 
-Model::Model(std::string filename)
+Model::Model(std::string filename,Shader *shader)
 {
 	mHalfExtents = glm::vec3(0.0f,0.0f,0.0f);
 	mMaxX = std::numeric_limits<float>::min();
@@ -41,14 +41,14 @@ Model::Model(std::string filename)
 	}
 
 	mDirectory = filename.substr(0,filename.find_last_of('/'));
-	processNode(mScene->mRootNode,mScene);
+	processNode(mScene->mRootNode,mScene,shader);
 
 	mHalfExtents = glm::vec3(abs(mMaxX-mMinX)/2.0f,abs(mMaxY-mMinY)/2.0f,abs(mMaxZ-mMaxZ)/2.0f);
 
 	mModels[filename] = this;
 }
 
-Model* Model::loadModel(std::string filename)
+Model* Model::loadModel(std::string filename, Shader *shader)
 {
 	if(mModels.find(filename)!=mModels.end())
 	{
@@ -56,7 +56,7 @@ Model* Model::loadModel(std::string filename)
 	}
 	else
 	{
-		return new Model(filename);
+		return new Model(filename,shader);
 	}
 }
 
@@ -77,7 +77,7 @@ void Model::draw(Shader *shader)
 	}
 }
 
-void Model::processNode(aiNode* node, const aiScene* scene)
+void Model::processNode(aiNode* node, const aiScene* scene, Shader *shader)
 {
 	for(int i = 0 ; i < node->mNumMeshes ; i++)
 	{
@@ -88,13 +88,13 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 			printf("Mesh: %d has %d bone(s)\n",i,mesh->mNumBones);
 		}
 
-		Mesh processedMesh = processMesh(i,mesh,scene);
+		Mesh processedMesh = processMesh(i,mesh,scene,shader);
 		mMeshes.push_back(processedMesh);
 	}
 
 	for(int i = 0 ; i < node->mNumChildren ; i++)
 	{
-		processNode(node->mChildren[i],scene);
+		processNode(node->mChildren[i],scene,shader);
 	}
 }
 
@@ -310,7 +310,7 @@ void Model::animate(std::string name, float &time, bool loop)
 	}
 }
 
-Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
+Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene, Shader *shader)
 {
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
@@ -319,7 +319,7 @@ Mesh Model::processMesh(int index, aiMesh* mesh, const aiScene* scene)
 	processGeometry(mesh,vertices,indices);
 	processMaterial(mesh,scene,material);
 
-	return Mesh(vertices,indices,material,scene,mesh);
+	return Mesh(vertices,indices,material,scene,mesh,shader);
 }
 
 GLuint Model::loadMaterialTexture(aiMaterial* mat, aiTextureType type, GLboolean &success)
